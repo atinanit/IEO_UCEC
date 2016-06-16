@@ -1805,31 +1805,15 @@ The number of DE genes importantly increases in the fourth model with respect to
 
 ### Volcano plot
 
-A useful diagnostic plot for DE analysis is the so-called volcano plot:
+A useful diagnostic plot for DE analysis is the so-called volcano plot. As it was said, we will use the model 4 corresponding to the adjust of known covariates plus the SVA, but we will compare it to the volcano plot of the model 2. The remarked genes in volcano plots change. For model 4, they are MIR4298, TSN, RNF122, CALHM2, TSG101, CACNA1S and SCARNA5.
 
-
-```r
-par(mfrow = c(1, 2), mar = c(4, 5, 3, 2))
-volcanoplot(fit2, coef = 2, highlight = 7, fit2$genes$symbol, main = "Model 2", las = 1)
-volcanoplot(fit4, coef = 2, highlight = 7, fit4$genes$symbol, main = "Model 4", las = 1)
-```
-
-<img src="figure/volcanoPlot-1.png" title="plot of chunk volcanoPlot" alt="plot of chunk volcanoPlot" height="500px" style="display: block; margin: auto;" />
+<img src="figure/volcanoPlot-1.png" title="Figure S15: Volcano plots for models 2 and 4" alt="Figure S15: Volcano plots for models 2 and 4" height="500px" style="display: block; margin: auto;" /><p class="caption">Figure S15: Volcano plots for models 2 and 4</p>
 
 ### MA-plot
 
 Another useful diagnostic plot is the MA-plot:
 
-
-```r
-par(mfrow=c(1, 1))
-top7 <- order(fit4$lods[, 2], decreasing = TRUE)[1:7]
-limma::plotMA(fit4, coef = 2, status = rownames(fit4$lods) %in% DEgenes, legend = FALSE,
-main = "Model 4", hl.pch = 46, hl.cex = 4, bg.pch = 46, bg.cex = 3, las = 1)
-text(fit4$Amean[top7], fit4$coef[top7, 2], fit4$genes$symbol[top7], cex = 0.5, pos = 4)
-```
-
-<img src="figure/maPlot-1.png" title="plot of chunk maPlot" alt="plot of chunk maPlot" height="500px" style="display: block; margin: auto;" />
+<img src="figure/maPlot-1.png" title="Figure S16: MA-plot for model 4" alt="Figure S16: MA-plot for model 4" height="500px" style="display: block; margin: auto;" /><p class="caption">Figure S16: MA-plot for model 4</p>
 
 ### Factorial designs
 

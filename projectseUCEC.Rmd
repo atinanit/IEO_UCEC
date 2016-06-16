@@ -588,11 +588,9 @@ hist(pvsv, main="", las=1)
 
 ## Differential expression: Extended analysis
 
-A linear regression model is a statistical model that captures linear relationships between a response variable and its predictor variables.
-
+In this section, a more extense analysis of differential expression is performed. Different types of linear regression models are built in order to assess differential expression.
 The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by `y`, which is n-dimensional, in terms of something much simpler, the `model`, which is p -dimensional.
-Thus, if our model is successful, the structure in the data should be captured in those
-`p` dimensions, leaving just random variation in the residuals which lie in an `(n-p)-dimensional space`.
+Thus, if our model is successful, the structure in the data should be captured in those `p` dimensions, leaving just random variation in the residuals which lie in an `(n-p)-dimensional space`.
 
 In the context of DE analysis, linear regression models can be written in matrix form, in `design matrices`. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. 
 
@@ -632,10 +630,9 @@ We are going to work as if the logCPM values were microarray expression data and
 fit <- lmFit(assays(se)$logCPM, design)
 ```
 
-Ww calculate moderated $t$-statistics using `eBayes`:
+We calculate moderated $t$-statistics using `eBayes`:
 
 ```{r}
-# Calculate moderated t-statistics --> p-value. 
 fit <- eBayes(fit)
 ```
 
@@ -646,51 +643,43 @@ A quick overview of the results can be obtained with `decideTests()`:
 FDRcutoff <- 0.05
 res <- decideTests(fit, p.value = FDRcutoff)
 summary(res) 
-# 3246 genes are underexpressed in tumor and overexpressed in normal. 
-#Take into account the category in the numerator!
 ```
+
+It can be observed that:
+- 3246 genes are underexpressed in tumor samples
+- 3161 genes are overexpressed in tumor samples
+- 5164 genes are not differentially expressed
 
 To obtain a full table of all results we should use the function `topTable()` as follows:
 
 ```{r}
-# Table of DE genes
 tt <- topTable(fit, coef = 2, n = Inf) # coef = 2 is for the second column. The colname can also be used. 
-                                      # n = Inf is for obtaining all DE genes. By default we would only see 10. 
-class(tt)
-dim(tt)
-head(tt)
+                                       # n = Inf is for obtaining all DE genes. By default we would only see 10. 
 FDRcutoff <- 0.05
 table(tt$adj.P.Val < FDRcutoff) # 6407 genes are differentially expressed
 # B is a logODDS. Probability of being DE / probability of not being DE
 # LogFC is the coefficient
-# rownames of the table correspond to feature identifiers, Entrez Gene IDs in this case. We can add further gene metadata if we want
+# rownames of the table correspond to feature identifiers, Entrez Gene IDs in this case. We can add further gene metadata with the following command:
 genesmd <- data.frame(chr = as.character(seqnames(rowRanges(se))), symbol = rowData(se)[,1], stringsAsFactors = FALSE)
 fit$genes <- genesmd
 tt <- topTable(fit, coef = 2, n = Inf)
 head(tt)
 
-# Examine the chormosome distribution of genes called DE at 5% of FDR
-sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)
-
 # Fetch gene identifiers of DE genes with FDR < 5%
 DEgenes <- rownames(tt)[tt$adj.P.Val < FDRcutoff]
 DEgenes_symbol <- tt$symbol[tt$adj.P.Val < FDRcutoff]
 length(DEgenes)
+
+# Examine the chormosome distribution of genes called DE at 5% of FDR
+sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 ```
 
-Using this simple analysis, the results obtained are `r length(DEgenes)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+Using this simple model, the results obtained are **`r length(DEgenes)` DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
-
-Assess accuracy in terms of recall and precision:
-
-```{r}
-# Calculate the recall as the fraction of genes with documented type-specific expression that we have called DE
-# Calculate the precision as the fraction of DE genes with documented type-specific expression
-```
 
 Two useful diagnostic plots for DE analysis are the distributions of p-values and moderated t-statistics:
 
-```{r}
+```{r fit1_diagnostic, echo=FALSE, fig.cap="Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model"}
 par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
 hist(tt$adj.P.Val, xlab = "Raw P-values", main = "", las = 1)
 qqt(fit$t[, 2], df = fit$df.prior + fit$df.residual, main = "", pch = ".", cex = 3)
@@ -703,7 +692,7 @@ RNA-seq counts may vary considerably from sample to sample for the same gene and
 
 What we will do is to calculate weights that estimate the mean-variance relationship at individual observation-by-gene level.
 
-```{r}
+```{r fit2_voom, fig.cap="Figure S12: Mean-variance relationship at individual observation-by-gene level"}
 v <- voom(dge, design, plot=TRUE)
 ```
 
@@ -726,34 +715,30 @@ res2 <- decideTests(fit2, p.value = FDRcutoff)
 summary(res2)
 ```
 
-Add gene metadata and fetch table of results:
+And then, we will fetch the table of results and the number of DE genes:
 
 ```{r}
 fit2$genes <- genesmd
 tt2 <- topTable(fit2, coef = 2, n = Inf)
-head(tt2)
 table(tt$adj.P.Val < FDRcutoff)
 
-# Fetch gene identifiers of DE genes with FDR < 5%
 DEgenes2 <- rownames(tt2)[tt2$adj.P.Val < FDRcutoff]
 DEgenes_symbol2 <- tt2$symbol[tt2$adj.P.Val < FDRcutoff]
 length(DEgenes2)
 ```
 
-Examine again the chromosome distribution of genes called DE at 10% FDR:
+We will examine again the chromosome distribution of genes called DE at 5% FDR:
 
 ```{r}
 sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)
-# Assess again the acuraccy
-####
 ```
 
-Using this approach, the results obtained are `r length(DEgenes2)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+Using this approach, the results obtained are **`r length(DEgenes2)` DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
 
-Examine diagnostic plots for limma DE analysis with voom weights:
+The diagnostic plots for limma DE analysis with voom weights are the following:
 
-```{r}
+```{r fit2_diagnostic, echo=FALSE, fig.cap="Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights"}
 par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
 hist(tt2$P.Value, xlab = "Raw P-values", main = "", las = 1)
 qqt(fit2$t[, 2], df = fit2$df.prior + fit2$df.residual, main = "", pch = ".", cex = 3)
@@ -763,28 +748,19 @@ abline(0, 1, lwd = 2)
 
 ### 3. Adjust for known covariates
 
-Consider the phenotypic data. We will try to identify **potential sources of unwanted variation**:
+We will try to identify **potential sources of unwanted variation** in the phenotypic data, in order to adjust one of them to the model. Possible options could be:
+- Histologic diagnosis
+- Tumor invasion percent
+- Age at diagnosis
+- Race
+- Tissue Source Site
+However, the majority of them are not possible because the tumor samples contain the corresponding phenotypic data but the normal samples not. The only possible source of variation which is in both tumor and normal samples is the **Tissue Source Site**, which is obtained from the patient barcode.
 
 ```{r}
-#colData(se)
-# Some possible sources of unwanted variation:
-table(se$tumor_invasion_percent)
-table(se$age_at_diagnosis)
-table(se$ethnicity)
-table(se$race)
-table(se$histologic_diagnosis)
-table(se$bcr_patient_barcode)
 table(substr(se$bcr_patient_barcode, 6, 7))
 ```
 
-Now, we are going to adjust for the `histologic_diagnosis` factor. We need to start over building a new design matrix that includes that factor.
-
-```{r}
-design <- model.matrix(~type + substr(se$bcr_patient_barcode, 6, 7), data = colData(se))
-# design <- model.matrix(~type + bcr_patient_barcode, data = colData(se))
-```
-
-Tissue Source Site 
+We have the following possible sites inside TSS of our samples:
 - AJ: International Genomics Consortium 
 - AX: Gynecologic Oncology Group 
 - BG: University of Pittsburgh 
@@ -792,28 +768,31 @@ Tissue Source Site
 - DI: MD Anderson 
 - E6: Roswell Park
 
+So, we adjust the model for the `tissue source site` factor. We need to start over building a new design matrix that includes that factor.
+
+```{r}
+design <- model.matrix(~type + substr(se$bcr_patient_barcode, 6, 7), data = colData(se))
+```
+
 Fit again the linear models for each gene with the updated design matrix:
 
 ```{r}
 fit3 <- lmFit(v, design)
-# Calculate moderated t-statistics:
 fit3 <- eBayes(fit3)
 ```
 
-Examine the extent of differential expression at 10% FDR:
+Examine the extent of differential expression at 5% FDR:
 
 ```{r}
 res3 <- decideTests(fit3, p.value = FDRcutoff)
 summary(res3)
 ```
 
-Add gene metadata and fetch table of results:
+Add gene metadata and fetch table of results and the number of DE genes
 
 ```{r}
 fit3$genes <- genesmd
 tt3 <- topTable(fit3, coef = 2, n = Inf)
-head(tt3)
-# Fetch gene identifiers of DE genes with FDR < 5%
 DEgenes3 <- rownames(tt3)[tt3$adj.P.Val < FDRcutoff]
 DEgenes_symbol3 <- tt3$symbol[tt3$adj.P.Val < FDRcutoff]
 length(DEgenes3)
@@ -827,11 +806,10 @@ sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 
 Using this approach, the results obtained are `r length(DEgenes3)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
-Assess accuracy (not possible)
 
 ### 4. Adjust for unknown covariates
 
-We can adjust for unkown covariates using surrogate variable analysis (SVA). First, estimate surrogate variables (SVs) from the log-CPM values calculated by voom:
+The previous model is only adjusted for the known covariate. It is also possible to adjust it for unknown covariates using **surrogate variable analysis (SVA)**. First, estimate surrogate variables (SVs) from the log-CPM values calculated by voom:
 
 ```{r}
 mod0 <- model.matrix(~substr(se$bcr_patient_barcode, 6, 7), colData(se))
@@ -839,81 +817,69 @@ sv <- sva(v$E, mod = design, mod0 = mod0)
 sv$n # number of surrogate variables
 ```
 
-Second, we add these surrogate variables (SVs) to the design matrix:
+There are **`r sv$n` SVs**. Second, we add these SVs to the design matrix, which has the following form:
 
 ```{r}
 design <- cbind(design, sv$sv)
 colnames(design) <- c(colnames(design)[1:6], paste0("SV", 1:sv$n))
-```
-
-The design matrix looks as follows:
-
-```{r}
 head(design)
 ```
 
-Third, we fit again the linear models for each gene with the updated design matrix:
+Third, we fit again the linear models for each gene with the updated design matrix, and calculate the moderated t-statistics:
 
 ```{r}
 fit4 <- lmFit(v, design)
-```
-
-Fourth, we calculate the moderated t-statistics:
-
-```{r}
 fit4 <- eBayes(fit4)
 ```
 
-Finally, we examine the extent of differential expression at 5% FDR:
+We examine the extent of differential expression at 5% FDR:
 
 ```{r}
 res4 <- decideTests(fit4, p.value = FDRcutoff)
-summary(res4)
 ```
 
-We add the metadata
+Finally, the metadata is added, the table of results is computed and the number of DE genes is calculated:
 
 ```{r}
 fit4$genes <- genesmd
 tt4 <- topTable(fit4, coef = 2, n = Inf)
-head(tt4)
-# Fetch gene identifiers of DE genes with FDR < 5%
 DEgenes4 <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 DEgenes_symbol4 <- tt4$symbol[tt4$adj.P.Val < FDRcutoff]
 length(DEgenes4)
 ```
 
-Now, we examine the chromosome distribution of genes called DE at 10% FDR:
+The chromosome distribution of genes called DE at 5% FDR is calculated:
 
 ```{r}
 sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 ```
 
-Using this approach, the results obtained are `r length(DEgenes4)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+Using this approach, there are **`r length(DEgenes4)` DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
-Assess the accuracy:
 
-```{r}
-# DEgenes4 <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
-# r <- c(r, sum(DEgenes4 %in% c(msy, xie))/length(c(msy, xie)))
-# r
-# p <- c(p, sum(DEgenes4 %in% c(msy, xie))/length(DEgenes4))
-# p
-```
+Now, it is possible to examine the diagnostic plots for the DE analysis using this approach:
 
-And we examine the diagnostic plots for limma DE analysis:
-
-```{r}
+```{r fit4_diagnostic, echo=FALSE, fig.cap="Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA"}
 par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
 hist(tt4$P.Value, xlab = "Raw P-values", main = "", las = 1)
 qqt(fit4$t[, 2], df = fit4$df.prior + fit4$df.residual, main = "", pch = ".", cex = 3)
 abline(0, 1, lwd = 2)
 ```
 
+### Summary of the obtained results and choice of the model
 
-### Adjust for repeated measurements --> not necessary in our dataset
+The ideal would be to do a performance comparison of the different models, but it is not possible as it would be needed a dataset of documented differentially expressed genes in endometrial cancer in order to calculate the accuracy of each model. As there is no such benchmark, an alternative is to look at the statistical power in terms of DE genes. 
 
-### Performance comparison --> comparison of the accuracy, but we do not have accuracy
+The following table summarizes the results of DE genes for the different approaches tried during the analysis. 
+
+Approach used | DE genes | Chromosome with more DE
+--------------|----------|------------------------
+1. Fit directly the linear model  | `r length(DEgenes)` | `r names(sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+2. Adjust for mean-variance relationship | `r length(DEgenes2)` | `r names(sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+3. Adjust for known covariates | `r length(DEgenes3)` | `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+4. Adjust for known covariates + SVA | `r length(DEgenes4)` | `r names(sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+
+The number of DE genes importantly increases in the fourth model with respect to the other models. If the outcome of interest is not confounded with other sources of variation, the more variables that we put in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it has. So, the model that is going to be used for the following analysis is the fourth model, **adjusting for known covariates plus the SVA**.
 
 ### Volcano plot
 
@@ -989,16 +955,6 @@ res <- decideTests(fit6, p.value = 0.1)
 vennDiagram(res)
 ```
 
-### Summary of the results obtained
-
-Approach used | DE genes | Chromosome with more DE
---------------|----------|------------------------
-1 | `r length(DEgenes)` | `r names(sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
-2 | `r length(DEgenes2)` | `r names(sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
-3 | `r length(DEgenes3)` | `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
-4 | `r length(DEgenes4)` | `r names(sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
-
-Using this approach, the results obtained are `r length(DEgenes3)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
 
 ## Functional Enrichment: The Gene Ontology analysis

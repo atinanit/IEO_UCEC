@@ -278,7 +278,90 @@ The project starts importing the raw table of counts. It contains RNA-seq counts
 
 ```r
 library(SummarizedExperiment)
+```
 
+```
+Loading required package: GenomicRanges
+```
+
+```
+Loading required package: BiocGenerics
+```
+
+```
+Loading required package: parallel
+```
+
+```
+
+Attaching package: 'BiocGenerics'
+```
+
+```
+The following objects are masked from 'package:parallel':
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+```
+
+```
+The following objects are masked from 'package:stats':
+
+    IQR, mad, xtabs
+```
+
+```
+The following objects are masked from 'package:base':
+
+    anyDuplicated, append, as.data.frame, cbind, colnames,
+    do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, lengths, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff,
+    sort, table, tapply, union, unique, unsplit
+```
+
+```
+Loading required package: S4Vectors
+```
+
+```
+Loading required package: stats4
+```
+
+```
+
+Attaching package: 'S4Vectors'
+```
+
+```
+The following objects are masked from 'package:base':
+
+    colMeans, colSums, expand.grid, rowMeans, rowSums
+```
+
+```
+Loading required package: IRanges
+```
+
+```
+Loading required package: GenomeInfoDb
+```
+
+```
+Loading required package: Biobase
+```
+
+```
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+```
+
+```r
 se <- readRDS(file.path("data", "seUCEC.rds"))
 se
 ```
@@ -442,7 +525,24 @@ To perform quality assessment and normalization it is necessary to load the [edg
 
 ```r
 library(edgeR)
+```
 
+```
+Loading required package: limma
+```
+
+```
+
+Attaching package: 'limma'
+```
+
+```
+The following object is masked from 'package:BiocGenerics':
+
+    plotMA
+```
+
+```r
 dge <- DGEList(counts=assays(se)$counts, genes=mcols(se))
 ```
 
@@ -687,6 +787,23 @@ want to see the code. Options fig.height and fig.width control height and width
 of the plot in inches while out.height and out.width do it in the final output
 file; see http://yihui.name/knitr/options for full details.
 --->
+
+
+```
+Loading required package: lattice
+```
+
+```
+Loading required package: annotate
+```
+
+```
+Loading required package: AnnotationDbi
+```
+
+```
+Loading required package: XML
+```
 
 <img src="figure/distRawExp-1.png" title="Figure S2: Non-parametric density distribution of expression profiles per sample." alt="Figure S2: Non-parametric density distribution of expression profiles per sample." width="800px" style="display: block; margin: auto;" /><p class="caption">Figure S2: Non-parametric density distribution of expression profiles per sample.</p>
 
@@ -977,6 +1094,36 @@ The sva (http://www.bioconductor.org/packages/release/bioc/html/sva.html) packag
 
 ```r
 library(sva)
+```
+
+```
+Loading required package: mgcv
+```
+
+```
+Loading required package: nlme
+```
+
+```
+
+Attaching package: 'nlme'
+```
+
+```
+The following object is masked from 'package:IRanges':
+
+    collapse
+```
+
+```
+This is mgcv 1.8-12. For overview type 'help("mgcv-package")'.
+```
+
+```
+Loading required package: genefilter
+```
+
+```r
 mod <- model.matrix(~ se$type, colData(se))
 combatexp <- ComBat(logCPM, batch, mod)
 ```
@@ -1055,7 +1202,7 @@ sv <- sva(assays(se)$logCPM, mod, mod0)
 ```
 
 ```
-Number of significant surrogate variables is:  11 
+Number of significant surrogate variables is:  10 
 Iteration (out of 5 ):1  2  3  4  5  
 ```
 
@@ -1064,10 +1211,10 @@ sv$n
 ```
 
 ```
-[1] 11
+[1] 10
 ```
 
-The SVA algorithm has found 11 surrogate variables. Let's use them to assess again the extent of differential expression this time adjusting for these surrogate variables.
+The SVA algorithm has found 10 surrogate variables. Let's use them to assess again the extent of differential expression this time adjusting for these surrogate variables.
 
 
 ```r
@@ -1078,10 +1225,10 @@ sum(p.adjust(pvsv, method="fdr") < 0.01)
 ```
 
 ```
-[1] 6966
+[1] 6722
 ```
 
-We have increased the number of changing genes to 6966.
+We have increased the number of changing genes to 6722.
 Figure S10 shows the resulting distribution of p-values.
 
 <img src="figure/psvdist-1.png" title="Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA." alt="Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA." width="400px" style="display: block; margin: auto;" /><p class="caption">Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA.</p>
@@ -1089,11 +1236,9 @@ Figure S10 shows the resulting distribution of p-values.
 
 ## Differential expression: Extended analysis
 
-A linear regression model is a statistical model that captures linear relationships between a response variable and its predictor variables.
-
+In this section, a more extense analysis of differential expression is performed. Different types of linear regression models are built in order to assess differential expression.
 The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by `y`, which is n-dimensional, in terms of something much simpler, the `model`, which is p -dimensional.
-Thus, if our model is successful, the structure in the data should be captured in those
-`p` dimensions, leaving just random variation in the residuals which lie in an `(n-p)-dimensional space`.
+Thus, if our model is successful, the structure in the data should be captured in those `p` dimensions, leaving just random variation in the residuals which lie in an `(n-p)-dimensional space`.
 
 In the context of DE analysis, linear regression models can be written in matrix form, in `design matrices`. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. 
 
@@ -1145,11 +1290,10 @@ We are going to work as if the logCPM values were microarray expression data and
 fit <- lmFit(assays(se)$logCPM, design)
 ```
 
-Ww calculate moderated $t$-statistics using `eBayes`:
+We calculate moderated $t$-statistics using `eBayes`:
 
 
 ```r
-# Calculate moderated t-statistics --> p-value. 
 fit <- eBayes(fit)
 ```
 
@@ -1170,48 +1314,17 @@ summary(res)
 1        11281              3208
 ```
 
-```r
-# 3246 genes are underexpressed in tumor and overexpressed in normal. 
-#Take into account the category in the numerator!
-```
+It can be observed that:
+- 3246 genes are underexpressed in tumor samples
+- 3161 genes are overexpressed in tumor samples
+- 5164 genes are not differentially expressed
 
 To obtain a full table of all results we should use the function `topTable()` as follows:
 
 
 ```r
-# Table of DE genes
 tt <- topTable(fit, coef = 2, n = Inf) # coef = 2 is for the second column. The colname can also be used. 
-                                      # n = Inf is for obtaining all DE genes. By default we would only see 10. 
-class(tt)
-```
-
-```
-[1] "data.frame"
-```
-
-```r
-dim(tt)
-```
-
-```
-[1] 11571     6
-```
-
-```r
-head(tt)
-```
-
-```
-               logFC  AveExpr         t      P.Value    adj.P.Val        B
-100423021  -7.770322 2.915817 -19.83072 8.213668e-20 9.118237e-16 34.98370
-136647    -10.924134 3.807787 -19.40805 1.576050e-19 9.118237e-16 34.36003
-125       -10.196670 2.839204 -16.34769 2.601714e-17 7.773403e-14 29.42196
-10844       2.407317 3.986429  16.32964 2.687202e-17 7.773403e-14 29.39044
-81626       2.287176 7.656542  15.95795 5.262783e-17 1.073157e-13 28.73444
-144348      5.587508 3.240038  15.82544 6.707689e-17 1.073157e-13 28.49739
-```
-
-```r
+                                       # n = Inf is for obtaining all DE genes. By default we would only see 10. 
 FDRcutoff <- 0.05
 table(tt$adj.P.Val < FDRcutoff) # 6407 genes are differentially expressed
 ```
@@ -1225,7 +1338,7 @@ FALSE  TRUE
 ```r
 # B is a logODDS. Probability of being DE / probability of not being DE
 # LogFC is the coefficient
-# rownames of the table correspond to feature identifiers, Entrez Gene IDs in this case. We can add further gene metadata if we want
+# rownames of the table correspond to feature identifiers, Entrez Gene IDs in this case. We can add further gene metadata with the following command:
 genesmd <- data.frame(chr = as.character(seqnames(rowRanges(se))), symbol = rowData(se)[,1], stringsAsFactors = FALSE)
 fit$genes <- genesmd
 tt <- topTable(fit, coef = 2, n = Inf)
@@ -1247,6 +1360,17 @@ head(tt)
 10844     7.773403e-14 29.39044
 81626     1.073157e-13 28.73444
 144348    1.073157e-13 28.49739
+```
+
+```r
+# Fetch gene identifiers of DE genes with FDR < 5%
+DEgenes <- rownames(tt)[tt$adj.P.Val < FDRcutoff]
+DEgenes_symbol <- tt$symbol[tt$adj.P.Val < FDRcutoff]
+length(DEgenes)
+```
+
+```
+[1] 6457
 ```
 
 ```r
@@ -1276,39 +1400,12 @@ chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt
                    1                    1                    1 
 ```
 
-```r
-# Fetch gene identifiers of DE genes with FDR < 5%
-DEgenes <- rownames(tt)[tt$adj.P.Val < FDRcutoff]
-DEgenes_symbol <- tt$symbol[tt$adj.P.Val < FDRcutoff]
-length(DEgenes)
-```
+Using this simple model, the results obtained are **6457 DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
-```
-[1] 6457
-```
-
-Using this simple analysis, the results obtained are 6457 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
-
-
-Assess accuracy in terms of recall and precision:
-
-
-```r
-# Calculate the recall as the fraction of genes with documented type-specific expression that we have called DE
-# Calculate the precision as the fraction of DE genes with documented type-specific expression
-```
 
 Two useful diagnostic plots for DE analysis are the distributions of p-values and moderated t-statistics:
 
-
-```r
-par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
-hist(tt$adj.P.Val, xlab = "Raw P-values", main = "", las = 1)
-qqt(fit$t[, 2], df = fit$df.prior + fit$df.residual, main = "", pch = ".", cex = 3)
-abline(0, 1, lwd = 2)
-```
-
-<img src="figure/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" style="display: block; margin: auto;" />
+<img src="figure/fit1_diagnostic-1.png" title="Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model" alt="Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model" style="display: block; margin: auto;" /><p class="caption">Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model</p>
 
 ### 2. Fit adjusting for the mean-variance relationship
 
@@ -1321,7 +1418,7 @@ What we will do is to calculate weights that estimate the mean-variance relation
 v <- voom(dge, design, plot=TRUE)
 ```
 
-<img src="figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" style="display: block; margin: auto;" />
+<img src="figure/fit2_voom-1.png" title="Figure S12: Mean-variance relationship at individual observation-by-gene level" alt="Figure S12: Mean-variance relationship at individual observation-by-gene level" style="display: block; margin: auto;" /><p class="caption">Figure S12: Mean-variance relationship at individual observation-by-gene level</p>
 
 Now, we will fit again the linear model this time using the voom weights:
 
@@ -1352,33 +1449,12 @@ summary(res2)
 1        11256              3152
 ```
 
-Add gene metadata and fetch table of results:
+And then, we will fetch the table of results and the number of DE genes:
 
 
 ```r
 fit2$genes <- genesmd
 tt2 <- topTable(fit2, coef = 2, n = Inf)
-head(tt2)
-```
-
-```
-         chr  symbol      logFC  AveExpr         t      P.Value
-7251   chr11  TSG101  -4.083023 5.981660 -16.35155 1.398839e-17
-146183 chr16    OTOA  -4.477428 4.975309 -16.00044 2.678611e-17
-81626   chr1 SHCBP1L   2.284236 7.656577  15.96597 2.856757e-17
-167227  chr5    DCP2  -5.597885 8.759367 -15.17763 1.283220e-16
-3845   chr12    KRAS  -3.797303 5.774210 -15.17303 1.294750e-16
-136647  chr7  MPLKIP -10.913645 3.817133 -14.97688 1.899056e-16
-          adj.P.Val        B
-7251   1.101851e-13 30.06191
-146183 1.101851e-13 29.35803
-81626  1.101851e-13 29.35172
-167227 2.996311e-13 27.87056
-3845   2.996311e-13 27.86293
-136647 3.662329e-13 27.17117
-```
-
-```r
 table(tt$adj.P.Val < FDRcutoff)
 ```
 
@@ -1389,7 +1465,6 @@ FALSE  TRUE
 ```
 
 ```r
-# Fetch gene identifiers of DE genes with FDR < 5%
 DEgenes2 <- rownames(tt2)[tt2$adj.P.Val < FDRcutoff]
 DEgenes_symbol2 <- tt2$symbol[tt2$adj.P.Val < FDRcutoff]
 length(DEgenes2)
@@ -1399,7 +1474,7 @@ length(DEgenes2)
 [1] 6441
 ```
 
-Examine again the chromosome distribution of genes called DE at 10% FDR:
+We will examine again the chromosome distribution of genes called DE at 5% FDR:
 
 
 ```r
@@ -1428,385 +1503,24 @@ chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt
                    1                    1                    1 
 ```
 
-```r
-# Assess again the acuraccy
-####
-```
-
-Using this approach, the results obtained are 6441 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
+Using this approach, the results obtained are **6441 DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
-Examine diagnostic plots for limma DE analysis with voom weights:
+The diagnostic plots for limma DE analysis with voom weights are the following:
 
-
-```r
-par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
-hist(tt2$P.Value, xlab = "Raw P-values", main = "", las = 1)
-qqt(fit2$t[, 2], df = fit2$df.prior + fit2$df.residual, main = "", pch = ".", cex = 3)
-abline(0, 1, lwd = 2)
-```
-
-<img src="figure/unnamed-chunk-43-1.png" title="plot of chunk unnamed-chunk-43" alt="plot of chunk unnamed-chunk-43" style="display: block; margin: auto;" />
+<img src="figure/fit2_diagnostic-1.png" title="Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights" alt="Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights" style="display: block; margin: auto;" /><p class="caption">Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights</p>
 
 
 ### 3. Adjust for known covariates
 
-Consider the phenotypic data. We will try to identify **potential sources of unwanted variation**:
+We will try to identify **potential sources of unwanted variation** in the phenotypic data, in order to adjust one of them to the model. Possible options could be:
+- Histologic diagnosis
+- Tumor invasion percent
+- Age at diagnosis
+- Race
+- Tissue Source Site
+However, the majority of them are not possible because the tumor samples contain the corresponding phenotypic data but the normal samples not. The only possible source of variation which is in both tumor and normal samples is the **Tissue Source Site**, which is obtained from the patient barcode.
 
-
-```r
-#colData(se)
-# Some possible sources of unwanted variation:
-table(se$tumor_invasion_percent)
-```
-
-```
-
-              0              10             100            1.03 
-              0               0               0               0 
-             11              12            12.5              13 
-              0               1               0               0 
-             14              15            15.6            15.8 
-              0               0               0               0 
-             16              17              18              19 
-              0               1               0               0 
-           1.92              20              21              22 
-              0               0               1               0 
-           22.5              23              24              25 
-              0               0               0               1 
-             26              27              28             280 
-              0               0               0               0 
-             29               3              30              31 
-              0               0               0               0 
-             32              33              34              35 
-              0               0               0               0 
-           35.7              36             3.6            36.7 
-              0               0               0               0 
-             37              38               4              40 
-              0               0               1               0 
-             41              42              44              45 
-              0               0               0               0 
-             46              47              48              49 
-              0               0               0               0 
-              5              50              51              52 
-              0               4               0               0 
-             53              54              55              56 
-              0               0               0               0 
-            5.6              57              58            58.8 
-              0               0               0               0 
-             59               6              60              61 
-              0               0               0               0 
-             62            62.5              64              65 
-              0               0               0               0 
-             66              67              69               7 
-              0               0               0               0 
-             70              71              72              73 
-              0               0               0               0 
-           73.3              74              75              76 
-              0               0               0               1 
-           76.9              77              78               8 
-              0               0               0               0 
-             80              81              82              83 
-              0               0               0               0 
-             84              85              86             8.6 
-              0               0               0               0 
-             87            87.6              88            89.1 
-              0               0               0               0 
-              9              90              91              92 
-              0               1               0               0 
-             93              94              95              96 
-              0               0               0               0 
-             98              99 [Not Available] 
-              0               0               5 
-```
-
-```r
-table(se$age_at_diagnosis)
-```
-
-```
-
-31 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 
- 0  0  0  0  0  0  0  0  0  0  1  0  0  0  1  2  0  0  0  0  0  1  0  0  1 
-57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 
- 1  0  0  1  0  1  2  1  0  0  0  0  2  0  0  0  0  0  0  0  0  0  0  0  0 
-82 83 84 85 86 87 88 89 90 
- 1  0  0  0  0  0  0  0  1 
-```
-
-```r
-table(se$ethnicity)
-```
-
-```
-
-    HISPANIC OR LATINO        [Not Available]        [Not Evaluated] 
-                     0                      1                      0 
-NOT HISPANIC OR LATINO 
-                    15 
-```
-
-```r
-table(se$race)
-```
-
-```
-
-         AMERICAN INDIAN OR ALASKA NATIVE 
-                                        0 
-                                    ASIAN 
-                                        0 
-                BLACK OR AFRICAN AMERICAN 
-                                        2 
-NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER 
-                                        0 
-                          [Not Available] 
-                                        0 
-                          [Not Evaluated] 
-                                        0 
-                                    WHITE 
-                                       14 
-```
-
-```r
-table(se$histologic_diagnosis)
-```
-
-```
-
-Endometrioid endometrial adenocarcinoma 
-                                     14 
-          Mixed serous and endometrioid 
-                                      0 
-      Serous endometrial adenocarcinoma 
-                                      2 
-```
-
-```r
-table(se$bcr_patient_barcode)
-```
-
-```
-
-TCGA-2E-A9G8 TCGA-5B-A90C TCGA-5S-A9Q8 TCGA-A5-A0G1 TCGA-A5-A0G2 
-           0            0            0            0            0 
-TCGA-A5-A0G3 TCGA-A5-A0G5 TCGA-A5-A0G9 TCGA-A5-A0GA TCGA-A5-A0GB 
-           0            0            0            0            0 
-TCGA-A5-A0GD TCGA-A5-A0GE TCGA-A5-A0GG TCGA-A5-A0GH TCGA-A5-A0GI 
-           0            0            0            0            0 
-TCGA-A5-A0GJ TCGA-A5-A0GM TCGA-A5-A0GN TCGA-A5-A0GP TCGA-A5-A0GQ 
-           0            0            0            0            0 
-TCGA-A5-A0GR TCGA-A5-A0GU TCGA-A5-A0GV TCGA-A5-A0GW TCGA-A5-A0GX 
-           0            0            0            0            0 
-TCGA-A5-A0R6 TCGA-A5-A0R7 TCGA-A5-A0R8 TCGA-A5-A0R9 TCGA-A5-A0RA 
-           0            0            0            0            0 
-TCGA-A5-A0VO TCGA-A5-A0VP TCGA-A5-A0VQ TCGA-A5-A1OF TCGA-A5-A1OG 
-           0            0            0            0            0 
-TCGA-A5-A1OH TCGA-A5-A1OJ TCGA-A5-A1OK TCGA-A5-A2K2 TCGA-A5-A2K3 
-           0            0            0            0            0 
-TCGA-A5-A2K4 TCGA-A5-A2K5 TCGA-A5-A2K7 TCGA-A5-A3LO TCGA-A5-A3LP 
-           0            0            0            0            0 
-TCGA-AJ-A23M TCGA-AJ-A23N TCGA-AJ-A23O TCGA-AJ-A2QK TCGA-AJ-A2QL 
-           0            0            0            0            0 
-TCGA-AJ-A2QM TCGA-AJ-A2QN TCGA-AJ-A2QO TCGA-AJ-A3BD TCGA-AJ-A3BF 
-           0            0            0            0            0 
-TCGA-AJ-A3BG TCGA-AJ-A3BH TCGA-AJ-A3BI TCGA-AJ-A3BK TCGA-AJ-A3EJ 
-           0            0            0            0            0 
-TCGA-AJ-A3EK TCGA-AJ-A3EL TCGA-AJ-A3EM TCGA-AJ-A3I9 TCGA-AJ-A3IA 
-           0            0            0            0            0 
-TCGA-AJ-A3NC TCGA-AJ-A3NE TCGA-AJ-A3NF TCGA-AJ-A3NG TCGA-AJ-A3NH 
-           2            2            0            0            2 
-TCGA-AJ-A3OJ TCGA-AJ-A3OK TCGA-AJ-A3OL TCGA-AJ-A3QS TCGA-AJ-A3TW 
-           0            0            0            0            0 
-TCGA-AJ-A5DV TCGA-AJ-A5DW TCGA-AJ-A6NU TCGA-AJ-A8CT TCGA-AJ-A8CV 
-           0            0            0            0            0 
-TCGA-AJ-A8CW TCGA-AP-A051 TCGA-AP-A052 TCGA-AP-A053 TCGA-AP-A054 
-           0            0            0            0            0 
-TCGA-AP-A056 TCGA-AP-A059 TCGA-AP-A05A TCGA-AP-A05D TCGA-AP-A05H 
-           0            0            0            0            0 
-TCGA-AP-A05J TCGA-AP-A05N TCGA-AP-A05O TCGA-AP-A05P TCGA-AP-A0L8 
-           0            0            0            0            0 
-TCGA-AP-A0L9 TCGA-AP-A0LD TCGA-AP-A0LE TCGA-AP-A0LF TCGA-AP-A0LG 
-           0            0            0            0            0 
-TCGA-AP-A0LH TCGA-AP-A0LI TCGA-AP-A0LJ TCGA-AP-A0LL TCGA-AP-A0LM 
-           0            0            0            0            0 
-TCGA-AP-A0LN TCGA-AP-A0LO TCGA-AP-A0LP TCGA-AP-A0LS TCGA-AP-A0LT 
-           0            0            0            0            0 
-TCGA-AP-A0LV TCGA-AP-A1DH TCGA-AP-A1DK TCGA-AP-A1DM TCGA-AP-A1DO 
-           0            0            0            0            0 
-TCGA-AP-A1DP TCGA-AP-A1DQ TCGA-AP-A1DR TCGA-AP-A1DV TCGA-AP-A1E0 
-           0            0            0            0            0 
-TCGA-AP-A1E1 TCGA-AP-A1E3 TCGA-AP-A1E4 TCGA-AP-A3K1 TCGA-AP-A5FX 
-           0            0            0            0            0 
-TCGA-AW-A1PO TCGA-AX-A05S TCGA-AX-A05T TCGA-AX-A05U TCGA-AX-A05W 
-           0            0            0            0            0 
-TCGA-AX-A05Y TCGA-AX-A05Z TCGA-AX-A060 TCGA-AX-A062 TCGA-AX-A063 
-           2            0            0            0            0 
-TCGA-AX-A064 TCGA-AX-A06B TCGA-AX-A06D TCGA-AX-A06F TCGA-AX-A06H 
-           0            0            0            0            0 
-TCGA-AX-A06J TCGA-AX-A06L TCGA-AX-A0IS TCGA-AX-A0IU TCGA-AX-A0IW 
-           0            0            0            0            0 
-TCGA-AX-A0IZ TCGA-AX-A0J0 TCGA-AX-A0J1 TCGA-AX-A1C4 TCGA-AX-A1C5 
-           2            2            0            0            0 
-TCGA-AX-A1C7 TCGA-AX-A1C8 TCGA-AX-A1C9 TCGA-AX-A1CA TCGA-AX-A1CC 
-           0            0            0            0            0 
-TCGA-AX-A1CE TCGA-AX-A1CF TCGA-AX-A1CI TCGA-AX-A1CJ TCGA-AX-A1CK 
-           0            2            0            0            0 
-TCGA-AX-A1CN TCGA-AX-A1CP TCGA-AX-A1CR TCGA-AX-A2H2 TCGA-AX-A2H4 
-           0            0            0            0            0 
-TCGA-AX-A2H5 TCGA-AX-A2H7 TCGA-AX-A2H8 TCGA-AX-A2HA TCGA-AX-A2HC 
-           0            0            2            0            0 
-TCGA-AX-A2HD TCGA-AX-A2HF TCGA-AX-A2HG TCGA-AX-A2HH TCGA-AX-A2HJ 
-           2            0            0            0            0 
-TCGA-AX-A2HK TCGA-AX-A2IN TCGA-AX-A2IO TCGA-AX-A3FS TCGA-AX-A3FT 
-           0            0            0            0            0 
-TCGA-AX-A3FV TCGA-AX-A3FW TCGA-AX-A3FX TCGA-AX-A3FZ TCGA-AX-A3G1 
-           0            0            0            0            0 
-TCGA-AX-A3G3 TCGA-AX-A3G4 TCGA-AX-A3G6 TCGA-AX-A3G7 TCGA-AX-A3G8 
-           0            0            0            0            0 
-TCGA-AX-A3G9 TCGA-AX-A3GB TCGA-AX-A3GI TCGA-B5-A0JN TCGA-B5-A0JR 
-           0            0            0            0            0 
-TCGA-B5-A0JS TCGA-B5-A0JT TCGA-B5-A0JU TCGA-B5-A0JV TCGA-B5-A0JX 
-           0            0            0            0            0 
-TCGA-B5-A0JY TCGA-B5-A0JZ TCGA-B5-A0K0 TCGA-B5-A0K1 TCGA-B5-A0K2 
-           0            0            0            0            0 
-TCGA-B5-A0K3 TCGA-B5-A0K4 TCGA-B5-A0K6 TCGA-B5-A0K7 TCGA-B5-A0K8 
-           0            0            0            0            0 
-TCGA-B5-A0K9 TCGA-B5-A0KB TCGA-B5-A11E TCGA-B5-A11F TCGA-B5-A11G 
-           0            0            0            0            0 
-TCGA-B5-A11H TCGA-B5-A11I TCGA-B5-A11J TCGA-B5-A11L TCGA-B5-A11M 
-           0            0            0            0            0 
-TCGA-B5-A11N TCGA-B5-A11O TCGA-B5-A11P TCGA-B5-A11Q TCGA-B5-A11R 
-           0            0            0            0            0 
-TCGA-B5-A11S TCGA-B5-A11U TCGA-B5-A11V TCGA-B5-A11W TCGA-B5-A11X 
-           0            0            0            0            0 
-TCGA-B5-A11Y TCGA-B5-A11Z TCGA-B5-A121 TCGA-B5-A1MR TCGA-B5-A1MS 
-           0            0            0            0            0 
-TCGA-B5-A1MU TCGA-B5-A1MV TCGA-B5-A1MW TCGA-B5-A1MX TCGA-B5-A1MY 
-           0            0            0            0            0 
-TCGA-B5-A1MZ TCGA-B5-A1N2 TCGA-B5-A3F9 TCGA-B5-A3FA TCGA-B5-A3FB 
-           0            0            0            0            0 
-TCGA-B5-A3FC TCGA-B5-A3FD TCGA-B5-A3FH TCGA-B5-A3S1 TCGA-B5-A5OC 
-           0            0            0            0            0 
-TCGA-B5-A5OD TCGA-B5-A5OE TCGA-BG-A0LW TCGA-BG-A0LX TCGA-BG-A0M0 
-           0            0            0            0            0 
-TCGA-BG-A0M2 TCGA-BG-A0M3 TCGA-BG-A0M4 TCGA-BG-A0M6 TCGA-BG-A0M7 
-           0            0            0            0            0 
-TCGA-BG-A0M8 TCGA-BG-A0M9 TCGA-BG-A0MA TCGA-BG-A0MC TCGA-BG-A0MG 
-           0            0            0            0            0 
-TCGA-BG-A0MH TCGA-BG-A0MI TCGA-BG-A0MK TCGA-BG-A0MO TCGA-BG-A0MQ 
-           0            0            0            0            0 
-TCGA-BG-A0MS TCGA-BG-A0MT TCGA-BG-A0MU TCGA-BG-A0RY TCGA-BG-A0VT 
-           0            0            0            0            0 
-TCGA-BG-A0VV TCGA-BG-A0VW TCGA-BG-A0VX TCGA-BG-A0VZ TCGA-BG-A0W1 
-           0            0            0            0            0 
-TCGA-BG-A0W2 TCGA-BG-A0YU TCGA-BG-A0YV TCGA-BG-A186 TCGA-BG-A187 
-           0            0            0            0            0 
-TCGA-BG-A18A TCGA-BG-A18B TCGA-BG-A18C TCGA-BG-A220 TCGA-BG-A221 
-           0            0            0            0            0 
-TCGA-BG-A222 TCGA-BG-A2AD TCGA-BG-A2AE TCGA-BG-A2L7 TCGA-BG-A3EW 
-           0            2            0            0            2 
-TCGA-BG-A3PP TCGA-BK-A0C9 TCGA-BK-A0CB TCGA-BK-A13B TCGA-BK-A13C 
-           2            0            2            0            2 
-TCGA-BK-A4ZD TCGA-BK-A56F TCGA-BK-A6W3 TCGA-BK-A6W4 TCGA-BS-A0T9 
-           2            0            0            0            0 
-TCGA-BS-A0TA TCGA-BS-A0TC TCGA-BS-A0TD TCGA-BS-A0TE TCGA-BS-A0TG 
-           0            0            0            0            0 
-TCGA-BS-A0TI TCGA-BS-A0TJ TCGA-BS-A0U5 TCGA-BS-A0U7 TCGA-BS-A0U8 
-           0            0            0            0            0 
-TCGA-BS-A0U9 TCGA-BS-A0UA TCGA-BS-A0UF TCGA-BS-A0UJ TCGA-BS-A0UL 
-           0            0            0            0            0 
-TCGA-BS-A0UM TCGA-BS-A0UT TCGA-BS-A0UV TCGA-BS-A0V4 TCGA-BS-A0V6 
-           0            0            0            0            0 
-TCGA-BS-A0V7 TCGA-BS-A0V8 TCGA-BS-A0VI TCGA-BS-A0WQ TCGA-D1-A0ZN 
-           0            0            0            0            0 
-TCGA-D1-A0ZO TCGA-D1-A0ZP TCGA-D1-A0ZQ TCGA-D1-A0ZR TCGA-D1-A0ZS 
-           0            0            0            0            0 
-TCGA-D1-A0ZU TCGA-D1-A0ZV TCGA-D1-A0ZZ TCGA-D1-A101 TCGA-D1-A102 
-           0            0            0            0            0 
-TCGA-D1-A103 TCGA-D1-A15V TCGA-D1-A15W TCGA-D1-A15X TCGA-D1-A15Z 
-           0            0            0            0            0 
-TCGA-D1-A160 TCGA-D1-A161 TCGA-D1-A162 TCGA-D1-A163 TCGA-D1-A165 
-           0            0            0            0            0 
-TCGA-D1-A167 TCGA-D1-A168 TCGA-D1-A169 TCGA-D1-A16B TCGA-D1-A16D 
-           0            0            0            0            0 
-TCGA-D1-A16E TCGA-D1-A16F TCGA-D1-A16G TCGA-D1-A16I TCGA-D1-A16J 
-           0            0            0            0            0 
-TCGA-D1-A16N TCGA-D1-A16O TCGA-D1-A16Q TCGA-D1-A16R TCGA-D1-A16S 
-           0            0            0            0            0 
-TCGA-D1-A16V TCGA-D1-A16X TCGA-D1-A16Y TCGA-D1-A174 TCGA-D1-A175 
-           0            0            0            0            0 
-TCGA-D1-A176 TCGA-D1-A177 TCGA-D1-A179 TCGA-D1-A17A TCGA-D1-A17B 
-           0            0            0            0            0 
-TCGA-D1-A17C TCGA-D1-A17D TCGA-D1-A17F TCGA-D1-A17H TCGA-D1-A17K 
-           0            0            0            0            0 
-TCGA-D1-A17L TCGA-D1-A17M TCGA-D1-A17N TCGA-D1-A17Q TCGA-D1-A17R 
-           0            0            0            0            0 
-TCGA-D1-A17S TCGA-D1-A17T TCGA-D1-A17U TCGA-D1-A1NS TCGA-D1-A1NU 
-           0            0            0            0            0 
-TCGA-D1-A1NW TCGA-D1-A1NX TCGA-D1-A1NY TCGA-D1-A1NZ TCGA-D1-A1O0 
-           0            0            0            0            0 
-TCGA-D1-A1O5 TCGA-D1-A1O7 TCGA-D1-A1O8 TCGA-D1-A2G0 TCGA-D1-A2G5 
-           0            0            0            0            0 
-TCGA-D1-A2G6 TCGA-D1-A2G7 TCGA-D1-A3DA TCGA-D1-A3DG TCGA-D1-A3DH 
-           0            0            0            0            0 
-TCGA-D1-A3JP TCGA-D1-A3JQ TCGA-DF-A2KV TCGA-DF-A2KY TCGA-DF-A2KZ 
-           0            0            0            0            0 
-TCGA-DF-A2L0 TCGA-DI-A0WH TCGA-DI-A1BU TCGA-DI-A1BY TCGA-DI-A1C3 
-           0            0            0            0            0 
-TCGA-DI-A1NN TCGA-DI-A1NO TCGA-DI-A2QT TCGA-DI-A2QU TCGA-DI-A2QY 
-           0            0            0            0            0 
-TCGA-E6-A1LX TCGA-E6-A1LZ TCGA-E6-A1M0 TCGA-E6-A2P8 TCGA-E6-A2P9 
-           0            0            2            0            0 
-TCGA-E6-A8L9 TCGA-EC-A1NJ TCGA-EC-A1QX TCGA-EC-A24G TCGA-EO-A1Y5 
-           0            0            0            0            0 
-TCGA-EO-A1Y7 TCGA-EO-A1Y8 TCGA-EO-A22R TCGA-EO-A22S TCGA-EO-A22T 
-           0            0            0            0            0 
-TCGA-EO-A22U TCGA-EO-A22X TCGA-EO-A22Y TCGA-EO-A2CG TCGA-EO-A2CH 
-           0            0            0            0            0 
-TCGA-EO-A3AS TCGA-EO-A3AU TCGA-EO-A3AV TCGA-EO-A3AY TCGA-EO-A3AZ 
-           0            0            0            0            0 
-TCGA-EO-A3B0 TCGA-EO-A3B1 TCGA-EO-A3KU TCGA-EO-A3KW TCGA-EO-A3KX 
-           0            0            0            0            0 
-TCGA-EO-A3L0 TCGA-EY-A1G7 TCGA-EY-A1G8 TCGA-EY-A1GC TCGA-EY-A1GD 
-           0            0            0            0            0 
-TCGA-EY-A1GE TCGA-EY-A1GF TCGA-EY-A1GH TCGA-EY-A1GI TCGA-EY-A1GK 
-           0            0            0            0            0 
-TCGA-EY-A1GL TCGA-EY-A1GM TCGA-EY-A1GO TCGA-EY-A1GP TCGA-EY-A1GQ 
-           0            0            0            0            0 
-TCGA-EY-A1GR TCGA-EY-A1GS TCGA-EY-A1GT TCGA-EY-A1GU TCGA-EY-A1GV 
-           0            0            0            0            0 
-TCGA-EY-A1GW TCGA-EY-A1GX TCGA-EY-A1H0 TCGA-EY-A210 TCGA-EY-A212 
-           0            0            0            0            0 
-TCGA-EY-A214 TCGA-EY-A215 TCGA-EY-A2OM TCGA-EY-A2ON TCGA-EY-A2OO 
-           0            0            0            0            0 
-TCGA-EY-A2OP TCGA-EY-A2OQ TCGA-EY-A3L3 TCGA-EY-A3QX TCGA-EY-A4KR 
-           0            0            0            0            0 
-TCGA-EY-A547 TCGA-EY-A548 TCGA-EY-A549 TCGA-EY-A54A TCGA-EY-A5W2 
-           0            0            0            0            0 
-TCGA-EY-A72D TCGA-FI-A2CX TCGA-FI-A2CY TCGA-FI-A2D0 TCGA-FI-A2D2 
-           0            0            0            0            0 
-TCGA-FI-A2D4 TCGA-FI-A2D5 TCGA-FI-A2D6 TCGA-FI-A2EU TCGA-FI-A2EW 
-           0            0            0            0            0 
-TCGA-FI-A2EX TCGA-FI-A2EY TCGA-FI-A2F4 TCGA-FI-A2F8 TCGA-FI-A2F9 
-           0            0            0            0            0 
-TCGA-FI-A3PV TCGA-FI-A3PX TCGA-FL-A1YF TCGA-FL-A1YG TCGA-FL-A1YH 
-           0            0            0            0            0 
-TCGA-FL-A1YI TCGA-FL-A1YL TCGA-FL-A1YM TCGA-FL-A1YN TCGA-FL-A1YQ 
-           0            0            0            0            0 
-TCGA-FL-A1YT TCGA-FL-A1YU TCGA-FL-A1YV TCGA-FL-A3WE TCGA-H5-A2HR 
-           0            0            0            0            0 
-TCGA-JU-AAVI TCGA-K6-A3WQ TCGA-KJ-A3U4 TCGA-KP-A3VZ TCGA-KP-A3W0 
-           0            0            0            0            0 
-TCGA-KP-A3W1 TCGA-KP-A3W3 TCGA-KP-A3W4 TCGA-PG-A5BC TCGA-PG-A6IB 
-           0            0            0            0            0 
-TCGA-PG-A7D5 TCGA-PG-A914 TCGA-PG-A915 TCGA-PG-A916 TCGA-PG-A917 
-           0            0            0            0            0 
-TCGA-QF-A5YS TCGA-QF-A5YT TCGA-QS-A5YQ TCGA-QS-A5YR TCGA-QS-A744 
-           0            0            0            0            0 
-TCGA-QS-A8F1 TCGA-SJ-A6ZI TCGA-SJ-A6ZJ TCGA-SL-A6J9 TCGA-SL-A6JA 
-           0            0            0            0            0 
-```
 
 ```r
 table(substr(se$bcr_patient_barcode, 6, 7))
@@ -1818,15 +1532,7 @@ AJ AX BG BK E6
  6 12  6  6  2 
 ```
 
-Now, we are going to adjust for the `histologic_diagnosis` factor. We need to start over building a new design matrix that includes that factor.
-
-
-```r
-design <- model.matrix(~type + substr(se$bcr_patient_barcode, 6, 7), data = colData(se))
-# design <- model.matrix(~type + bcr_patient_barcode, data = colData(se))
-```
-
-Tissue Source Site 
+We have the following possible sites inside TSS of our samples:
 - AJ: International Genomics Consortium 
 - AX: Gynecologic Oncology Group 
 - BG: University of Pittsburgh 
@@ -1834,16 +1540,22 @@ Tissue Source Site
 - DI: MD Anderson 
 - E6: Roswell Park
 
+So, we adjust the model for the `tissue source site` factor. We need to start over building a new design matrix that includes that factor.
+
+
+```r
+design <- model.matrix(~type + substr(se$bcr_patient_barcode, 6, 7), data = colData(se))
+```
+
 Fit again the linear models for each gene with the updated design matrix:
 
 
 ```r
 fit3 <- lmFit(v, design)
-# Calculate moderated t-statistics:
 fit3 <- eBayes(fit3)
 ```
 
-Examine the extent of differential expression at 10% FDR:
+Examine the extent of differential expression at 5% FDR:
 
 
 ```r
@@ -1870,34 +1582,12 @@ summary(res3)
 1                                       1
 ```
 
-Add gene metadata and fetch table of results:
+Add gene metadata and fetch table of results and the number of DE genes
 
 
 ```r
 fit3$genes <- genesmd
 tt3 <- topTable(fit3, coef = 2, n = Inf)
-head(tt3)
-```
-
-```
-         chr  symbol     logFC  AveExpr         t      P.Value
-146183 chr16    OTOA -4.464702 4.975309 -16.97224 7.645144e-17
-219     chr9 ALDH1B1 -4.867851 4.947126 -16.63342 1.317598e-16
-7251   chr11  TSG101 -4.090658 5.981660 -16.43644 1.815646e-16
-3845   chr12    KRAS -3.748360 5.774210 -16.09158 3.206884e-16
-779     chr1 CACNA1S -4.916511 5.376838 -16.08049 3.266636e-16
-663    chr15   BNIP2 -5.958547 4.744921 -15.73310 5.853729e-16
-          adj.P.Val        B
-146183 7.002945e-13 28.37813
-219    7.002945e-13 27.81717
-7251   7.002945e-13 27.60785
-3845   7.559649e-13 27.04638
-779    7.559649e-13 26.98329
-663    1.050053e-12 26.29212
-```
-
-```r
-# Fetch gene identifiers of DE genes with FDR < 5%
 DEgenes3 <- rownames(tt3)[tt3$adj.P.Val < FDRcutoff]
 DEgenes_symbol3 <- tt3$symbol[tt3$adj.P.Val < FDRcutoff]
 length(DEgenes3)
@@ -1938,11 +1628,10 @@ chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt
 
 Using this approach, the results obtained are 6491 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
-Assess accuracy (not possible)
 
 ### 4. Adjust for unknown covariates
 
-We can adjust for unkown covariates using surrogate variable analysis (SVA). First, estimate surrogate variables (SVs) from the log-CPM values calculated by voom:
+The previous model is only adjusted for the known covariate. It is also possible to adjust it for unknown covariates using **surrogate variable analysis (SVA)**. First, estimate surrogate variables (SVs) from the log-CPM values calculated by voom:
 
 
 ```r
@@ -1963,18 +1652,12 @@ sv$n # number of surrogate variables
 [1] 9
 ```
 
-Second, we add these surrogate variables (SVs) to the design matrix:
+There are **9 SVs**. Second, we add these SVs to the design matrix, which has the following form:
 
 
 ```r
 design <- cbind(design, sv$sv)
 colnames(design) <- c(colnames(design)[1:6], paste0("SV", 1:sv$n))
-```
-
-The design matrix looks as follows:
-
-
-```r
 head(design)
 ```
 
@@ -2015,101 +1698,49 @@ TCGA.AX.A05Y.01A.11R.A00V.07                                      0
 TCGA.AX.A0IZ.01A.11R.A118.07                                      0
 TCGA.AX.A0J0.01A.11R.A109.07                                      0
                                       SV1         SV2         SV3
-TCGA.AJ.A3NC.01A.11R.A22K.07  0.102406867 -0.12182878  0.27746076
-TCGA.AJ.A3NE.01A.11R.A22K.07  0.065448685 -0.28952299  0.15155428
-TCGA.AJ.A3NH.01A.11R.A22K.07 -0.003567402  0.05556203  0.07984722
-TCGA.AX.A05Y.01A.11R.A00V.07  0.223533482  0.12012572 -0.38638515
-TCGA.AX.A0IZ.01A.11R.A118.07  0.156016394 -0.27855529 -0.01448108
-TCGA.AX.A0J0.01A.11R.A109.07 -0.203823845  0.08789727 -0.08187703
-                                     SV4         SV5        SV6
-TCGA.AJ.A3NC.01A.11R.A22K.07 -0.17994665  0.08821435 -0.1823997
-TCGA.AJ.A3NE.01A.11R.A22K.07 -0.03438036 -0.30359958 -0.1395863
-TCGA.AJ.A3NH.01A.11R.A22K.07 -0.05125137  0.08454970  0.3692608
-TCGA.AX.A05Y.01A.11R.A00V.07  0.19848950  0.08507325 -0.2651780
-TCGA.AX.A0IZ.01A.11R.A118.07 -0.23306996 -0.34590747 -0.1178895
-TCGA.AX.A0J0.01A.11R.A109.07 -0.25701562  0.20416751  0.0702024
+TCGA.AJ.A3NC.01A.11R.A22K.07  0.102406869 -0.12182878  0.27746076
+TCGA.AJ.A3NE.01A.11R.A22K.07  0.065448684 -0.28952300  0.15155429
+TCGA.AJ.A3NH.01A.11R.A22K.07 -0.003567403  0.05556203  0.07984721
+TCGA.AX.A05Y.01A.11R.A00V.07  0.223533483  0.12012572 -0.38638515
+TCGA.AX.A0IZ.01A.11R.A118.07  0.156016392 -0.27855529 -0.01448107
+TCGA.AX.A0J0.01A.11R.A109.07 -0.203823846  0.08789727 -0.08187704
+                                     SV4         SV5         SV6
+TCGA.AJ.A3NC.01A.11R.A22K.07 -0.17994665  0.08821434 -0.18239974
+TCGA.AJ.A3NE.01A.11R.A22K.07 -0.03438035 -0.30359959 -0.13958625
+TCGA.AJ.A3NH.01A.11R.A22K.07 -0.05125137  0.08454969  0.36926080
+TCGA.AX.A05Y.01A.11R.A00V.07  0.19848949  0.08507325 -0.26517806
+TCGA.AX.A0IZ.01A.11R.A118.07 -0.23306995 -0.34590747 -0.11788951
+TCGA.AX.A0J0.01A.11R.A109.07 -0.25701563  0.20416750  0.07020241
                                       SV7         SV8         SV9
-TCGA.AJ.A3NC.01A.11R.A22K.07  0.117946601 -0.03003028  0.03190464
-TCGA.AJ.A3NE.01A.11R.A22K.07  0.285120989  0.09296381 -0.05701625
-TCGA.AJ.A3NH.01A.11R.A22K.07  0.003551288 -0.45397798  0.11067229
-TCGA.AX.A05Y.01A.11R.A00V.07 -0.389586848 -0.24884877 -0.32586873
-TCGA.AX.A0IZ.01A.11R.A118.07  0.084247725  0.13700103  0.01980261
-TCGA.AX.A0J0.01A.11R.A109.07 -0.134303520  0.27996280 -0.13762299
+TCGA.AJ.A3NC.01A.11R.A22K.07  0.117946610 -0.03003028  0.03190465
+TCGA.AJ.A3NE.01A.11R.A22K.07  0.285120986  0.09296381 -0.05701625
+TCGA.AJ.A3NH.01A.11R.A22K.07  0.003551297 -0.45397797  0.11067228
+TCGA.AX.A05Y.01A.11R.A00V.07 -0.389586836 -0.24884878 -0.32586872
+TCGA.AX.A0IZ.01A.11R.A118.07  0.084247726  0.13700105  0.01980260
+TCGA.AX.A0J0.01A.11R.A109.07 -0.134303513  0.27996279 -0.13762299
 ```
 
-Third, we fit again the linear models for each gene with the updated design matrix:
+Third, we fit again the linear models for each gene with the updated design matrix, and calculate the moderated t-statistics:
 
 
 ```r
 fit4 <- lmFit(v, design)
-```
-
-Fourth, we calculate the moderated t-statistics:
-
-
-```r
 fit4 <- eBayes(fit4)
 ```
 
-Finally, we examine the extent of differential expression at 5% FDR:
+We examine the extent of differential expression at 5% FDR:
 
 
 ```r
 res4 <- decideTests(fit4, p.value = FDRcutoff)
-summary(res4)
 ```
 
-```
-   (Intercept) typetumor substr(se$bcr_patient_barcode, 6, 7)AX
--1          14      3986                                      0
-0          319      3726                                  11571
-1        11238      3859                                      0
-   substr(se$bcr_patient_barcode, 6, 7)BG
--1                                      0
-0                                   11571
-1                                       0
-   substr(se$bcr_patient_barcode, 6, 7)BK
--1                                      0
-0                                   11570
-1                                       1
-   substr(se$bcr_patient_barcode, 6, 7)E6   SV1   SV2   SV3   SV4   SV5
--1                                      0  2405  1376  1656   537   562
-0                                   11571  6882  9265  8026 10485 10346
-1                                       0  2284   930  1889   549   663
-     SV6   SV7   SV8   SV9
--1   473   699   335   382
-0  10550 10309 10941 10812
-1    548   563   295   377
-```
-
-We add the metadata
+Finally, the metadata is added, the table of results is computed and the number of DE genes is calculated:
 
 
 ```r
 fit4$genes <- genesmd
 tt4 <- topTable(fit4, coef = 2, n = Inf)
-head(tt4)
-```
-
-```
-         chr  symbol     logFC  AveExpr         t      P.Value
-51063  chr10  CALHM2 -3.112862 8.942054 -30.69203 1.045383e-18
-7247    chr2     TSN -5.257441 6.849777 -28.56400 4.460047e-18
-79845   chr8  RNF122 -4.730666 7.314546 -27.68947 8.343480e-18
-7251   chr11  TSG101 -3.971648 5.981660 -25.78819 3.483274e-17
-677775  chr2 SCARNA5 -3.457362 8.661676 -24.98933 6.542512e-17
-779     chr1 CACNA1S -4.789773 5.376838 -25.12699 5.861259e-17
-          adj.P.Val        B
-51063  1.209612e-14 32.97754
-7247   2.580360e-14 31.48551
-79845  3.218080e-14 30.92652
-7251   1.007624e-13 29.49788
-677775 1.261723e-13 28.92238
-779    1.261723e-13 28.89435
-```
-
-```r
-# Fetch gene identifiers of DE genes with FDR < 5%
 DEgenes4 <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 DEgenes_symbol4 <- tt4$symbol[tt4$adj.P.Val < FDRcutoff]
 length(DEgenes4)
@@ -2119,7 +1750,7 @@ length(DEgenes4)
 [1] 7845
 ```
 
-Now, we examine the chromosome distribution of genes called DE at 10% FDR:
+The chromosome distribution of genes called DE at 5% FDR is calculated:
 
 
 ```r
@@ -2150,35 +1781,27 @@ chr11_JH159137v1_alt chr17_GL000258v2_alt chr19_KI270921v1_alt
                    1 
 ```
 
-Using this approach, the results obtained are 7845 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
-
-Assess the accuracy:
+Using this approach, there are **7845 DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
-```r
-# DEgenes4 <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
-# r <- c(r, sum(DEgenes4 %in% c(msy, xie))/length(c(msy, xie)))
-# r
-# p <- c(p, sum(DEgenes4 %in% c(msy, xie))/length(DEgenes4))
-# p
-```
+Now, it is possible to examine the diagnostic plots for the DE analysis using this approach:
 
-And we examine the diagnostic plots for limma DE analysis:
+<img src="figure/fit4_diagnostic-1.png" title="Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA" alt="Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA" style="display: block; margin: auto;" /><p class="caption">Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA</p>
 
+### Summary of the obtained results and choice of the model
 
-```r
-par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
-hist(tt4$P.Value, xlab = "Raw P-values", main = "", las = 1)
-qqt(fit4$t[, 2], df = fit4$df.prior + fit4$df.residual, main = "", pch = ".", cex = 3)
-abline(0, 1, lwd = 2)
-```
+The ideal would be to do a performance comparison of the different models, but it is not possible as it would be needed a dataset of documented differentially expressed genes in endometrial cancer in order to calculate the accuracy of each model. As there is no such benchmark, an alternative is to look at the statistical power in terms of DE genes. 
 
-<img src="figure/unnamed-chunk-59-1.png" title="plot of chunk unnamed-chunk-59" alt="plot of chunk unnamed-chunk-59" style="display: block; margin: auto;" />
+The following table summarizes the results of DE genes for the different approaches tried during the analysis. 
 
+Approach used | DE genes | Chromosome with more DE
+--------------|----------|------------------------
+1. Fit directly the linear model  | 6457 | chr1
+2. Adjust for mean-variance relationship | 6441 | chr1
+3. Adjust for known covariates | 6491 | chr1
+4. Adjust for known covariates + SVA | 7845 | chr1
 
-### Adjust for repeated measurements --> not necessary in our dataset
-
-### Performance comparison --> comparison of the accuracy, but we do not have accuracy
+The number of DE genes importantly increases in the fourth model with respect to the other models. If the outcome of interest is not confounded with other sources of variation, the more variables that we put in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it has. So, the model that is going to be used for the following analysis is the fourth model, **adjusting for known covariates plus the SVA**.
 
 ### Volcano plot
 
@@ -2305,18 +1928,8 @@ res <- decideTests(fit6, p.value = 0.1)
 vennDiagram(res)
 ```
 
-<img src="figure/unnamed-chunk-66-1.png" title="plot of chunk unnamed-chunk-66" alt="plot of chunk unnamed-chunk-66" style="display: block; margin: auto;" />
+<img src="figure/unnamed-chunk-58-1.png" title="plot of chunk unnamed-chunk-58" alt="plot of chunk unnamed-chunk-58" style="display: block; margin: auto;" />
 
-### Summary of the results obtained
-
-Approach used | DE genes | Chromosome with more DE
---------------|----------|------------------------
-1 | 6457 | chr1
-2 | 6441 | chr1
-3 | 6491 | chr1
-4 | 7845 | chr1
-
-Using this approach, the results obtained are 6491 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
 ## Functional Enrichment: The Gene Ontology analysis
@@ -2334,7 +1947,66 @@ Doing this analysis with [GOstats](http://www.bioconductor.org/packages/release/
 
 ```r
 library(org.Hs.eg.db)
+```
+
+```
+
+```
+
+```r
 library(GOstats)
+```
+
+```
+Loading required package: Category
+```
+
+```
+Loading required package: Matrix
+```
+
+```
+
+Attaching package: 'Matrix'
+```
+
+```
+The following object is masked from 'package:S4Vectors':
+
+    expand
+```
+
+```
+Loading required package: graph
+```
+
+```
+
+Attaching package: 'graph'
+```
+
+```
+The following object is masked from 'package:XML':
+
+    addNode
+```
+
+```
+
+```
+
+```
+
+Attaching package: 'GOstats'
+```
+
+```
+The following object is masked from 'package:AnnotationDbi':
+
+    makeGOGraph
+```
+
+```r
 geneUniverse <- rownames(se)
 params <- new("GOHyperGParams", geneIds=DEgenes, universeGeneIds=geneUniverse,
                 annotation="org.Hs.eg.db", ontology="BP",
@@ -2701,20 +2373,21 @@ other attached packages:
  [7] org.Hs.eg.db_3.3.0         sva_3.20.0                
  [9] genefilter_1.54.2          mgcv_1.8-12               
 [11] nlme_3.1-128               geneplotter_1.50.0        
-[13] annotate_1.50.0            XML_3.98-1.1              
+[13] annotate_1.50.0            XML_3.98-1.4              
 [15] AnnotationDbi_1.34.3       lattice_0.20-33           
 [17] edgeR_3.14.0               limma_3.28.5              
 [19] SummarizedExperiment_1.2.2 Biobase_2.32.0            
-[21] GenomicRanges_1.24.1       GenomeInfoDb_1.8.1        
+[21] GenomicRanges_1.24.0       GenomeInfoDb_1.8.1        
 [23] IRanges_2.6.0              S4Vectors_0.10.1          
 [25] BiocGenerics_0.18.0        markdown_0.7.7            
 [27] knitr_1.13                
 
 loaded via a namespace (and not attached):
- [1] formatR_1.4            RColorBrewer_1.0-5     XVector_0.12.0        
+ [1] formatR_1.4            RColorBrewer_1.1-2     XVector_0.12.0        
  [4] tools_3.3.0            zlibbioc_1.18.0        digest_0.6.9          
  [7] RSQLite_1.0.0          evaluate_0.9           DBI_0.4-1             
-[10] stringr_0.6.2          grid_3.3.0             GSEABase_1.34.0       
-[13] survival_2.39-4        RBGL_1.48.1            codetools_0.2-14      
-[16] splines_3.3.0          AnnotationForge_1.14.2 KernSmooth_2.23-15    
+[10] stringr_1.0.0          grid_3.3.0             GSEABase_1.34.0       
+[13] RBGL_1.48.1            survival_2.39-4        magrittr_1.5          
+[16] codetools_0.2-14       splines_3.3.0          AnnotationForge_1.14.2
+[19] KernSmooth_2.23-15     stringi_1.1.1         
 ```

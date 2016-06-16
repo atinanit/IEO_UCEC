@@ -129,7 +129,24 @@ The normalization factors are calculated on the filtered expression data set. Th
 The MA-plots of the normalized expression profiles are performed.In general, we do not observe tumor samples with major expression-level dependent biases, although some of them show variations in low-expressed values. However, we see slightly expression-level dependent biases for some normal samples. The most suspicious cases are TCGA-AJ-A3NH, TCGA-AX-A2HC, TCGA-BK-A13C and TCGA-DI-A2QY, showing sizable dependency between M and A values. We should consider discarding those samples from the dataset if they present further signs of problematic features.
 
 
-After that, we findpotential surrogate of batch effect indicators. Given that each sample names corresponds to a TCGA barcode, we are going to derive different elements of the TCGA barcode and examine their distribution across samples.
+After that, given that each sample names corresponds to a TCGA barcode, we derive different elements of the TCGA barcode and examine their distribution across samples. Tissue Source Site (TSS) is used as surrogate of batch effect indicator variable. We examine how samples group together by hierarchical clustering and multidimensional scaling by Spearman correlation, annotating the outcome of interest and the the surrogate of batch indicator.
+
+In Figure S7 we show the corresponding multidimensional plot (MDS). Here it can be seen more clearly that the first source of variation separates tumor from normal samples. It can be observed that one tumor sample, corresponding to individual TCGA.AX.A2HC-tumor is separated from the rest, just as it happens in the hierchical clustering. A closer examination of its corresponding MA-plot also reveals a slight dependence of expression changes on average expression, overall in its paired normal sample. This turns to be one of the problematic samples we found previously, so at that point that pair of samples should be discarded to avoid undesired variation. Another similar case is the sample A2QY-normal, very clustered away within the normal group in the MDS plot, and also stated before as a problematic sample in the MA plot. For this reason, the A2QY samples will be removed.
+
+One of these techniques to remove batch effect is ComBat which is an empirical Bayes method robust to outliers in small sample sizes. The \href{http://www.bioconductor.org/packages/release/bioc/html/sva.html}{sva} package provides a function called ComBat().
+
+
+\subsection*{Differential expression}
+
+\subsection*{Functional enrichment}
+Functional enrichment analyses constitute a straightforward way to approach the question of what pathways may be differentially expressed (DE) in our data.
+
+The GO database project provides a controlled vocabulary to describe gene and gene product attributes in any organism. It consists of so-called GO terms, which are pairs of term identifier (GO ID) and description.
+
+There are several R packages at CRAN/Bioconductor that facilitate performing a functional enrichment analysis on the entire collection of GO gene sets. We are going to illustrate this analysis with the Bioconductor package \href{http://www.bioconductor.org/packages/release/bioc/html/GOstats.html}{GOstats}.
+
+We have to build a parameter object with information specifiying the gene universe, the set of DE genes, the annotation packages to use, etc. After that, we tun the functional enrichment analysis by a conditional test which takes into account the hierarchical structure of GO terms.
+
 
 %Manuscripts submitted to \textit{GENETICS} should contain a clear description of the experimental design in sufficient detail so that the experimental analysis could be repeated by another scientist. If the level of detail necessary to explain the protocol goes beyond two paragraphs, give a short description in the main body of the paper and prepare a detailed description for supporting information.  For example, details would include indicating how many individuals were used, and if applicable how individuals or groups were combined for analysis. If working with mutants indicate how many independent mutants were isolated. If working with populations indicate how samples were collected and whether they were random with respect to the target population.
 
@@ -144,9 +161,6 @@ After that, we findpotential surrogate of batch effect indicators. Given that ea
 
 %For example: Strains are available upon request. File S1 contains detailed descriptions of all supplemental files. File S2 contains SNP ID numbers and locations. File S3 contains genotypes for each individual. Sequence data are available at GenBank and the accession numbers are listed in File S3. Gene expression data are available at GEO with the accession number: GDS1234. Code used to generate the simulated data is provided in file S4. 
 
-\subsection*{Differential expression}
-
-\subsection*{Functional enrichment}
 
 \section*{Results and Discussion}
 

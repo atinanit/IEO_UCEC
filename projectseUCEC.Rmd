@@ -1,0 +1,1109 @@
+---
+output: html_document
+---
+<!---
+The following chunk of code, which should not be shown in the resulting document (echo=FALSE)
+sets up global processing options, such as forcing 'knitr' to stop when an error
+in the R code is encountered, caching of the results in the 'cache'
+directory and asking 'knitr' to figure out automatically the dependencies among
+code chunks to re-calculate cached results (autodep=TRUE).
+
+Other options could be changing the name of the directory where figures end up
+('figure' by default), etc. For a full account of 'knitr' options please consult
+http://yihui.name/knitr/options
+
+At the end of the chunk a 'cat()' call is made to dump a CSS file that gives
+a better look-and-feel than the knitr default one. See the source css/ieo.css
+and the resulting projectTemplate.html to understand where this is being dumpted.
+--->
+
+```{r setup, cache=FALSE, echo=FALSE, results='asis'}
+dumpcssfile <- function(fname) {
+  paste(c('<style type="text/css">', readLines(fname), '</style>\n'),
+        collapse="\n")
+}
+
+opts_chunk$set(cache=TRUE,
+               autodep=TRUE,
+               fig.align="center",
+               comment="")
+
+knit_hooks$set(error=function(x, options) stop(x),
+               fig.cap=function(before, options, envir) {
+                 if (!before) {
+                   paste0('<p class="caption">', options$fig.cap, "</p>")
+                 }
+               })
+
+cat(dumpcssfile(file.path("css", "ieo.css")))
+```
+
+# Analysis of a The Cancer Genome Atlas (TCGA) RNA-seq data set on Uterine Corpus Endometrial Carcinoma (UCEC)
+
+### Joaquim Aguirre (joaquim.aguirre01@estudiant.upf.edu), Gerard Funosas (gfunosas64@gmail.com), Cristina Prat (cristina.prat.ferrer@gmail.com)
+
+## Introduction
+
+Endometrial cancer develops in the cells that form the inner lining of the uterus, or the endometrium, and is one of the most common cancers of the female reproductive system. In 2010, approximately 43,000 women in the United States were estimated to have been diagnosed and almost 8,000 to have died of endometrial cancer. This cancer occurs most commonly in women aged 60 years or older. About 69 percent of endometrial cancers are diagnosed at an early stage, and as a result about 83 percent of women will survive five years following the time of diagnosis.
+
+TCGA researchers have: 
+- Identified four subtypes of endometrial cancer: POLE ultramutated, Microsatellite instability hypermutated, Copy number low and Copy number high
+- Uncovered shared genomic features between endometrial cancer and serous ovarian cancer, the Basal-like subtype of breast cancer as well as colorectal cancer
+- Characterized the marked differences between the two types of endometrial tumors (endometrioid and serous), and found that some endometrioid tumors have developed a strikingly similar pattern to serous tumors, suggesting they may benefit from a common treatment 
+    - The serous and some of the endometrioid tumors are characterized by frequent mutations in TP53, extensive copy number alterations and few DNA methylation changes
+    - The rest of the endometrioid tumors are characterized by few copy number alterations, scarce mutations in TP53 and frequent mutations in PTEN and KRAS
+
+
+This document should be processed from R and you need to install the packages [knitr](http://cran.r-project.org/web/packages/knitr/index.html) and [markdown](http://cran.r-project.org/web/packages/markdown/index.html). Once they are installed, you have to type the following instructions that generate a HTML document that you can open with a web browser:
+
+```
+# Load libraries to process the document
+library(knitr)     ## required for "knitting" from Rmd to md
+library(markdown)  ## required for processing from md to HTML
+knit2html("projectseUCEC.Rmd", force_v1=TRUE)  ## process Rmd to HTML
+browseURL("projectseUCEC.html") ## open the resulting HTML file from R
+```
+
+
+## Data import
+
+The project starts importing the raw table of counts. It contains RNA-seq counts for 20115 genes and 589 samples.
+
+```{r}
+library(SummarizedExperiment)
+
+se <- readRDS(file.path("data", "seUCEC.rds"))
+se
+```
+
+Using the following command it is possible to explore the phenotypic data information associated to the samples, which is associated in the R S4 object as metadata:
+
+```{r}
+dim(colData(se))
+colData(se)[1:5, 1:5]
+mcols(colData(se), use.names=TRUE)
+```
+
+These metadata provides with useful information about the clinical variables of the samples. The 'CDEID' column corresponds to the so-called `Common Data Element (CDE)` identifier, which can be used in https://cdebrowser.nci.nih.gov to search for further information about the associated clinical variable using the `Advanced search` form and the `Public ID` attribute search.
+
+Associated to the row (feature) data, there are 455 sequences (1 circular) from hg38 genome:
+
+```{r}
+rowRanges(se)
+```
+
+From the S4 object, it is possible to extract information about the gender of the patients who donated the samples. As the study is focused on endometrial cancer, all the samples are from female patients. There are also 33 'NA' samples which were considered to be discarded, but finally they have been mantained as they provide the project with some normal samples, which are not abundant in the dataset.
+
+```{r}
+table(se$gender)
+```
+
+
+## Quality assessment and normalization
+
+The fact that each RNA-seq sample may have been ultimately sequenced at slightly different depth and that there may be sample-specific biase implies that it may be needed to consider two normalization steps:
+
+-  Within-sample: adjustments to compare across features in a sample. 
+    - Scaling: using counts per million reads (CPM mapped to the genome) 
+-  Between-sample: adjustments to compare a feature across samples.
+    - Sample-specific normalization factors: using the TMM algorithm (package edgeR)
+    - Quantile normalization: using the CQN algorithm (package cqn)
+
+To perform quality assessment and normalization it is necessary to load the [edgeR](http://bioconductor.org/packages/edgeR) R/Bioconductor package and create a `DGEList' object. We adjust for sample- and gene-specific factors, to make gene expression values comparable across samples. 
+
+```{r}
+library(edgeR)
+
+dge <- DGEList(counts=assays(se)$counts, genes=mcols(se))
+names(dge)
+```
+
+
+### CPM scaling
+
+Now that the 'DGEList' object has been created, it is possible to perform the scaling to CPM values. Therefore, $\log_2$ CPM values of expression are calculated and used as an additional assay element to ease their manipulation. $\log_2$ CPM units separate better high and low expression, than raw counts or non-logged CPM units.
+
+```{r}
+assays(se)$logCPM <- cpm(dge, log=TRUE, prior.count=0.5)
+assays(se)$logCPM[1:5, 1:5]
+```
+
+
+### Library sizes
+
+It is primordial to examine the library sizes in terms of total number of sequence read counts per sample. Figure S1.1 below shows library sizes per sample in increasing order:
+
+<!---
+you can control the height and width in pixels of the figure with 'out.height' and 'out.width'
+--->
+
+```{r libsizes1, echo=FALSE, out.width="600px", fig.cap="Figure S1.1: Library sizes in increasing order."}
+ord <- order(dge$sample$lib.size/1e6)
+barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(se$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+```
+
+As there is a large amount of samples, it is difficult to distinguish between tumor and normal samples in this plot. In further steps, it may be necessary to work with a subset in order to obtain clearer results.
+However, the figure S1.1 reveals substantial differences in sequencing depth between samples and it may be considered discarding those samples whose depth is substantially lower than the rest. 
+
+```{r}
+sampledepth <- round(dge$sample$lib.size / 1e6, digits=1)
+sampledepth <- sort(sampledepth)
+sampledepth[1:50]
+```
+
+It has been considered to discard those samples corresponding to the 10% quartile of the sample depth distribution, as the quality of the sequentiation of these samples is poorer.
+
+```{r}
+mask <- round(dge$sample$lib.size / 1e6, digits=1) > quantile(sampledepth, .1)
+dge <- dge[ , mask]
+dim(dge)
+se <- se[ , mask]
+dim(se)
+sampledepth <- round(dge$sample$lib.size / 1e6, digits=1)
+sampledepth <- sort(sampledepth)
+sampledepth[1:50]
+```
+
+The filtered set has now 527 samples. Before, there was a range of sample depth from 3.3 to 60.1 millions of reads, and now the range starts at 14.7 million reads. 
+
+
+### Subsetting
+
+As it has been stated previously, a subsetting step is necessary in order to manage easily the set of samples and obtain clearer results. But it is important to work with a subset which is as much representative as the initial set of samples and that contains the samples with higher quality. Three types of subsetting have been considered:
+- Random subsetting: As there is a small number of normal samples, this subsetting takes all normal samples, and  then the same number of tumor samples randomly
+- Paired subsetting: It uses only normal and tumor samples which are paired together, so that they are from the same patient
+- Independent subsetting: It uses only normal and tumor samples which are independent, so that they are not from the same patient
+
+The three options have been considered and tested. The paired subsetting offers the advantage that as samples are paired, the posterior analysis of batch effect identification will be performed with a perfectly balanced set, which avoids confusions for not having samples of one of the variables. However, in this dataset there are only 36 paired samples, which is a very small subset of samples.
+
+The other two options permit to work with a higher number of samples, but there are many problems related with having an unbalanced set.
+
+Finally, it has been preferred to work with the paired subset of samples in order to perform a clearer analysis of possible batch effects. The code used to perform random or indepedent subsetting has been left for possible future use.
+
+#### Random subsetting
+
+```{r}
+#mask <- se$type == "normal"
+#tumor <- se[, !mask]
+#subtumor <- tumor[, sample(1:ncol(tumor), length(mask[ which(mask==TRUE)]))]
+#se <- cbind(subtumor, se[, mask])
+#se
+#dge <- DGEList(counts=assays(se)$counts, genes=mcols(se))
+```
+
+#### Independent subsetting
+
+```{r}
+# mask <- se$type == "normal"
+# tumor <- se[, !mask]
+# normal <- se[, mask]
+# participant <- substr(colnames(se), 9, 12)
+# paired <- names(which(table(participant) == 2))
+# length(paired)
+
+# mask <- substr(colnames(se), 9, 12) %in% paired
+# paired_samples <- se[, mask]
+# mask <- substr(colnames(paired_samples), 9, 12) %in% substr(colnames(normal), 9, 12)
+# paired_samples <- paired_samples[, mask]
+# tumor_paired <- paired_samples[ , paired_samples$type == "tumor"]
+# normal_paired <- paired_samples[ , paired_samples$type =="normal"]
+# mask <- colnames(se) %in% colnames(tumor_paired)
+# independent <- se[ , !mask]
+
+# se <- independent
+# dge <- DGEList(counts=assays(independent)$counts, genes=mcols(independent))
+```
+
+#### Paired subsetting
+
+```{r}
+mask <- se$type == "normal"
+tumor <- se[, !mask]
+normal <- se[, mask]
+participant <- substr(colnames(se), 9, 12)
+paired <- names(which(table(participant) == 2))
+mask <- substr(colnames(se), 9, 12) %in% paired
+paired_samples <- se[, mask]
+mask <- substr(colnames(paired_samples), 9, 12) %in% substr(colnames(normal), 9, 12)
+paired_samples <- paired_samples[, mask]
+dim(paired_samples)
+colnames(paired_samples)
+table(paired_samples$type)
+ 
+se <- paired_samples
+dge <- DGEList(counts=assays(paired_samples)$counts, genes=mcols(paired_samples))
+```
+
+
+The plot showing the filtered library sizes after the random subsetting is represented in figure S1.2:
+
+```{r libsizes2, echo=FALSE, out.width="600px", fig.cap="Figure S1.2: Filtered library sizes in increasing order."}
+ord <- order(dge$sample$lib.size/1e6)
+barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(se$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+```
+
+
+### Distribution of expression levels among samples
+
+The following plot shows the distribution of expression values per sample in terms of logarithmic CPM units. Due to the large number of samples, tumor and normal samples are displayed separately.
+
+<!---
+the option echo=FALSE hides the R code. When plotting in general one does not
+want to see the code. Options fig.height and fig.width control height and width
+of the plot in inches while out.height and out.width do it in the final output
+file; see http://yihui.name/knitr/options for full details.
+--->
+
+```{r distRawExp, echo=FALSE, fig.height=4, fig.width=10, out.width="800px", fig.cap="Figure S2: Non-parametric density distribution of expression profiles per sample."}
+library(geneplotter)
+par(mfrow=c(1, 2))
+multidensity(as.list(as.data.frame(assays(se[, se$type == "tumor"])$logCPM)),
+             xlab="log 2 CPM", legend=NULL, main="Tumor samples", las=1)
+multidensity(as.list(as.data.frame(assays(se[, se$type == "normal"])$logCPM)),
+             xlab="log 2 CPM", legend=NULL, main="Normal samples", las=1)
+```
+
+There are no substantial differences appreciated between the samples in the distribution of expression values.
+
+
+### Distribution of expression levels among genes
+
+The average expression per gene through all the samples is calculated. $\log_2$ CPM values per gene are examined. Figure S3 shows the distribution of those values across genes.
+
+```{r exprdist, echo=FALSE, out.width="400px", fig.cap="Figure S3: Distribution of average expression level per gene."}
+par(mfrow=c(1, 1))
+avgexp <- rowMeans(assays(se)$logCPM)
+hist(avgexp, xlab="log2 CPM", main="", las=1)
+abline(v=1, col="red", lwd=2)
+```
+
+
+### Filtering of lowly-expressed genes
+
+In the light of the plot in figure S3, it may be considers a cutoff of 1 log CPM unit (as represented by the red line) as minimum value of expression to select genes being expressed across samples. Using this cutoff we proceed to filter out lowly-expressed genes.
+
+```{r}
+mask <- avgexp > 1
+se <- se[mask, ]
+dim(se)
+dge <- dge[mask, ]
+dim(dge)
+```
+
+### Normalization
+
+The normalization factors are calculated on the filtered expression data set. They have been calculated using the Trimmed Mean of M-values (TMM) method which addresses the issue of the different RNA composition of the samples by estimating a scaling factor for each library.
+
+```{r}
+dge <- calcNormFactors(dge)
+```
+
+The raw log2 CPM units have been replaced in the corresponding assay element of the `SummarizedExperiment` object, by the normalized ones.
+
+```{r}
+assays(se)$logCPM <- cpm(dge, log=TRUE, prior.count=0.5)
+```
+
+
+### MA-plots
+
+The MA-plots of the normalized expression profiles are performed. First, the plots corresponding to tumor samples are built:
+
+<!---
+Here we make a MA-plot for each sample. The options 'fig.height' and 'fig.width'
+control the relative image size in *inches*. The final image size results from
+'height'x'dpi' and 'width'x'dpi', where 'dpi' is the image resolution in
+"dots per inch" (by default dpi=72). To scale the image to a desired size use
+'out.width' and 'out.height'. More information at http://yihui.name/knitr/options
+--->
+
+```{r maPlotsTumor, fig.height=36, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+par(mfrow=c(9,2), mar=c(4, 5, 3, 1))
+setmp <- se[, se$type == "tumor"]
+dgetmp <- dge[, se$type == "tumor"]
+for (i in 1:ncol(setmp)) {
+  A <- rowMeans(assays(setmp)$logCPM)
+  M <- assays(setmp)$logCPM[, i] - A
+  samplename <- substr(as.character(setmp$bcr_patient_barcode[i]), 1, 12)
+  smoothScatter(A, M, main=samplename, las=1)
+  abline(h=0, col="blue", lwd=2)
+  lo <- lowess(M ~ A)
+  lines(lo$x, lo$y, col="red", lwd=2)
+}
+```
+
+In general, we do not observe samples with major expression-level dependent biases, although some of them show variations in low-expressed values.
+Now, the plots of the normal samples are performed:
+
+```{r maPlotsNormal, fig.height=36, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S5: MA-plots of the normal samples."}
+par(mfrow=c(9,2), mar=c(4, 5, 3, 1))
+setmp <- se[, se$type == "normal"]
+dgetmp <- dge[, se$type == "normal"]
+for (i in 1:ncol(setmp)) {
+  A <- rowMeans(assays(setmp)$logCPM)
+  M <- assays(setmp)$logCPM[, i] - A
+  samplename <- substr(as.character(setmp$bcr_patient_barcode[i]), 1, 12)
+  smoothScatter(A, M, main=samplename, las=1)
+  abline(h=0, col="blue", lwd=2)
+  lo <- lowess(M ~ A)
+  lines(lo$x, lo$y, col="red", lwd=2)
+}
+```
+
+In this case, most of the normals have correct MA plots, but for some of them we see slightly expression-level dependent biases. The most suspicious cases are TCGA-AJ-A3NH, TCGA-AX-A2HC, TCGA-BK-A13C and TCGA-DI-A2QY, showing sizable dependency between M and A values. 
+We should consider discarding those samples from the dataset if they present further signs of problematic features.  
+
+
+### Batch identification
+
+This step will be focused on finding potential surrogate of batch effect indicators. Given that each sample names corresponds to a TCGA barcode (see https://wiki.nci.nih.gov/display/TCGA/TCGA+barcode), following the strategy described in http://bioinformatics.mdanderson.org/main/TCGABatchEffects:Overview we are going to derive different elements of the TCGA barcode and examine their distribution across samples.
+
+From this information we can make the following observations:
+
+  * Samples were collected across different tissue source sites (TSS):
+  
+```{r}
+tss <- substr(colnames(se), 6, 7)
+table(tss)
+```
+
+  * All tumor samples belong to the same type (Code: 01, primary solid Tumor), while all normal samples belong to the "solid tissue normal" type (Code: 11):
+
+```{r}
+samplevial <- substr(colnames(se), 14, 16)
+table(samplevial)
+```
+
+  * The majority of the samples were sequenced using the same analyte:
+
+```{r}
+portionanalyte <- substr(colnames(se), 18, 20)
+table(portionanalyte)
+```
+  
+  * Samples were sequenced within different plates:
+  
+```{r}
+plate <- substr(colnames(se), 22, 25)
+table(plate)
+```
+
+  * All samples were sequenced at the same center 07:
+  
+```{r}
+center <- substr(colnames(se), 27, 28)
+table(center)
+```
+
+We are going to use the TSS as surrogate of batch effect indicator. Considering our outcome of interest as molecular changes between sample types, tumor vs. normal, we will examine now the cross-classification of this outcome with TSS.
+
+```{r}
+table(data.frame(TYPE=se$type, TSS=tss))
+```
+
+The experimental design using paired samples has the advantage which is perfectly balanced, as individuals from every outcome occur the same number of times through every batch.
+
+We examine now how samples group together by hierarchical clustering and multidimensional scaling, annotating the outcome of interest and the the surrogate of batch indicator. 
+
+We calculate again log CPM values with a higher prior count to moderate extreme fold-changes produced by low counts. 
+
+```{r}
+logCPM <- cpm(dge, log=TRUE, prior.count=3)
+```
+
+Next, calculate the distance between every pair of samples using a non-parametric association measure such as Spearman correlation:
+
+```{r}
+d <- as.dist(1-cor(logCPM, method="spearman"))
+```
+
+Then, perform a hierarchical clustering of the samples:
+
+```{r}
+sampleClustering <- hclust(d)
+```
+
+Now define the batch indicator variable as factor(tss), and extract the corresponding dendrogram annotating batch and outcome on its leafs. The resulting dendrogram is shown in Figure S6.
+
+```{r sampleClustering, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S6: Hierarchical clustering of the samples."}
+par(mfrow=c(1, 1))
+batch <- as.integer(factor(tss))
+sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
+names(batch) <- colnames(se)
+outcome <- paste(substr(colnames(se), 9, 12), as.character(se$type), sep="-")
+names(outcome) <- colnames(se)
+sampleDendrogram <- dendrapply(sampleDendrogram,
+                               function(x, batch, labels) {
+                                 if (is.leaf(x)) {
+                                   attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
+                                   attr(x, "label") <- as.vector(labels[attr(x, "label")])
+                                 }
+                                 x
+                               }, batch, outcome)
+plot(sampleDendrogram, main="Hierarchical clustering of samples")
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
+```
+
+In Figure S6, it can be observed that samples cluster primarily by sample type, tumor or normal. In general, there is a heterogeneous distribution of the different batches among the plot, and therefore there is no batch effect observed.
+
+```{r mds, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S7: Multidimensional scaling plot of the samples."}
+plotMDS(dge, labels=outcome, col=batch)
+legend("bottomright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
+       fill=sort(unique(batch)))
+```
+
+In Figure S7 we show the corresponding multidimensional plot (MDS). Here it can be seen more clearly that the first source of variation separates tumor from normal samples.
+It can be observed that one tumor sample, corresponding to individual `A2HC-tumor` is separated from the rest, just as it happens in the hierchical clustering. A closer examination of its corresponding MA-plot also reveals a slight dependence of expression changes on average expression, overall in its paired normal sample. This turns to be one of the problematic samples we found previously, so at that point that pair of samples should be discarded to avoid undesired variation. 
+Another similar case is the sample A2QY-normal, very clustered away within the normal group in the MDS plot, and also stated before as a problematic sample in the MA plot. For this reason, the A2QY samples will be removed.
+
+```{r}
+mask <- -grep("TCGA.AX.A2HC", colnames(se))
+se <- se[,mask]
+dge <- dge[,mask]
+mask <- -grep("TCGA.DI.A2QY", colnames(se))
+se <- se[,mask]
+dge <- dge[,mask]
+```
+
+With 4 paired samples removed, we need to recalculate the variables:
+
+```{r}
+tss <- substr(colnames(se), 6, 7)
+logCPM <- cpm(dge, log=TRUE, prior.count=3)
+```
+
+```{r sampleClustering_2, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S6: Hierarchical clustering of the samples."}
+par(mfrow=c(1, 1))
+batch <- as.integer(factor(tss))
+sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
+names(batch) <- colnames(se)
+outcome <- paste(substr(colnames(se), 9, 12), as.character(se$type), sep="-")
+names(outcome) <- colnames(se)
+sampleDendrogram <- dendrapply(sampleDendrogram,
+                               function(x, batch, labels) {
+                                 if (is.leaf(x)) {
+                                   attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
+                                   attr(x, "label") <- as.vector(labels[attr(x, "label")])
+                                 }
+                                 x
+                               }, batch, outcome)
+plot(sampleDendrogram, main="Hierarchical clustering of samples")
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
+```
+
+And get the new MDS plot: 
+
+```{r mds3, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S7_3: Multidimensional scaling plot of the samples."}
+plotMDS(dge, labels=outcome, col=batch)
+legend("bottomright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
+       fill=sort(unique(batch)))
+```
+
+### Removing batch effect: ComBat
+
+One of these techniques to remove batch effect is ComBat (http://www.ncbi.nlm.nih.gov/pubmed/16632515), which is an empirical Bayes method robust to outliers in small sample sizes.
+The sva (http://www.bioconductor.org/packages/release/bioc/html/sva.html) package provides a function called ComBat() to use this technique as follows:
+
+```{r}
+library(sva)
+mod <- model.matrix(~ se$type, colData(se))
+combatexp <- ComBat(logCPM, batch, mod)
+d <- as.dist(1-cor(combatexp, method="spearman"))
+
+sampleClustering <- hclust(d)
+```
+
+Let's verify the extent to which batch effect has been removed with the hierarchical clustering of the samples:
+
+```{r sampleClustering_3, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S8: Hierarchical clustering of the samples."}
+par(mfrow=c(1, 1))
+batch <- as.integer(factor(tss))
+sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
+names(batch) <- colnames(se)
+outcome <- paste(substr(colnames(se), 9, 12), as.character(se$type), sep="-")
+names(outcome) <- colnames(se)
+sampleDendrogram <- dendrapply(sampleDendrogram,
+                               function(x, batch, labels) {
+                                 if (is.leaf(x)) {
+                                   attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
+                                   attr(x, "label") <- as.vector(labels[attr(x, "label")])
+                                 }
+                                 x
+                               }, batch, outcome)
+plot(sampleDendrogram, main="Hierarchical clustering of samples")
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
+```
+
+The plot in Figure S8 shows a better stratification of the tumor and normal samples than in the last plot (Figure S6) without removing the batch effect. 
+
+
+## Differential expression: Simple analysis
+
+We perform a simple examination of expression changes and their associated p-values using the R/Bioconductor package [sva](http://bioconductor.org/packages/sva).
+
+Surrogate variable analysis (SVA) is a technique that tries to capture sources of heterogenity in high-throughput profiling data, such as non-biological variability introduced by batch effects.
+The output of SVA is an estimation of the number of so-called "surrogate variables" and their continuous values, which can be used later on to adjust for these unmeasured and unwanted effects.
+
+```{r}
+library(sva)
+mod <- model.matrix(~ se$type, colData(se))
+mod0 <- model.matrix(~ 1, colData(se))
+pv <- f.pvalue(assays(se)$logCPM, mod, mod0)
+sum(p.adjust(pv, method="fdr") < 0.01)
+```
+
+There are `r sum(p.adjust(pv, method="fdr") < 0.01)` genes changing significantly their expression at FDR < 1%. In Figure S9 below we show the distribution of the resulting p-values.
+
+```{r pdist, echo=FALSE, out.width="400px", fig.cap="Figure S9: Distribution of raw p-values for an F-test on every gene between tumor and normal samples."}
+hist(pv, main="", las=1)
+```
+
+Now, let's estimate surrogate variables using the `sva()` function.
+
+```{r}
+sv <- sva(assays(se)$logCPM, mod, mod0)
+sv$n
+```
+
+The SVA algorithm has found `r sv$n` surrogate variables. Let's use them to assess again the extent of differential expression this time adjusting for these surrogate variables.
+
+```{r}
+modsv <- cbind(mod, sv$sv)
+mod0sv <- cbind(mod0, sv$sv)
+pvsv <- f.pvalue(assays(se)$logCPM, modsv, mod0sv)
+sum(p.adjust(pvsv, method="fdr") < 0.01)
+```
+
+We have increased the number of changing genes to `r sum(p.adjust(pvsv, method="fdr") < 0.01)`.
+Figure S10 shows the resulting distribution of p-values.
+
+```{r psvdist, echo=FALSE, out.width="400px", fig.cap="Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA."}
+hist(pvsv, main="", las=1)
+```
+
+
+## Differential expression: Extended analysis
+
+A linear regression model is a statistical model that captures linear relationships between a response variable and its predictor variables.
+
+The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by `y`, which is n-dimensional, in terms of something much simpler, the `model`, which is p -dimensional.
+Thus, if our model is successful, the structure in the data should be captured in those
+`p` dimensions, leaving just random variation in the residuals which lie in an `(n-p)-dimensional space`.
+
+In the context of DE analysis, linear regression models can be written in matrix form, in `design matrices`. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. 
+
+A typical workflow to calculate DE analysis with [limma](http://www.bioconductor.org/packages/release/bioc/html/limma.html)
+consists of the following steps:
+
+1. Build design matrix: `model.matrix()`
+
+2. Calculate observational-level weights (not necessary for microarray data): `voom()`
+
+3. Estimate correlation in repeated measurements of a blocking factor (if needed): `duplicateCorrelation()`
+
+4. Fit linear model: `lmFit()`
+
+5. Build contrast matrix (if needed): `makeContrasts()`
+
+6. Fit contrasts (if needed): `contrasts.fit()`
+
+7. Calculate moderated $t$-statistics: `eBayes()`
+
+8. Output results: `topTable()`
+
+Now, we are going to observe the result of different approaches to perform DE analysis.
+
+### 1. Fit directly the linear model to every gene (fdr microarray data?)
+
+We create the desing matrix using the function `model.matrix()` as follows:
+
+```{r}
+design <- model.matrix(~factor(type), data = colData(se))
+head(design)
+```
+
+We are going to work as if the logCPM values were microarray expression data and fit directly the linear model specified in the design matrix to every gene using `lmFit()`:
+
+```{r}
+fit <- lmFit(assays(se)$logCPM, design)
+```
+
+Ww calculate moderated $t$-statistics using `eBayes`:
+
+```{r}
+# Calculate moderated t-statistics --> p-value. 
+fit <- eBayes(fit)
+```
+
+A quick overview of the results can be obtained with `decideTests()`:
+
+```{r}
+# Matrix of boolean: DE or not (criteria: p-value < 0.05)
+FDRcutoff <- 0.05
+res <- decideTests(fit, p.value = FDRcutoff)
+summary(res) 
+# 3246 genes are underexpressed in tumor and overexpressed in normal. 
+#Take into account the category in the numerator!
+```
+
+To obtain a full table of all results we should use the function `topTable()` as follows:
+
+```{r}
+# Table of DE genes
+tt <- topTable(fit, coef = 2, n = Inf) # coef = 2 is for the second column. The colname can also be used. 
+                                      # n = Inf is for obtaining all DE genes. By default we would only see 10. 
+class(tt)
+dim(tt)
+head(tt)
+FDRcutoff <- 0.05
+table(tt$adj.P.Val < FDRcutoff) # 6407 genes are differentially expressed
+# B is a logODDS. Probability of being DE / probability of not being DE
+# LogFC is the coefficient
+# rownames of the table correspond to feature identifiers, Entrez Gene IDs in this case. We can add further gene metadata if we want
+genesmd <- data.frame(chr = as.character(seqnames(rowRanges(se))), symbol = rowData(se)[,1], stringsAsFactors = FALSE)
+fit$genes <- genesmd
+tt <- topTable(fit, coef = 2, n = Inf)
+head(tt)
+
+# Examine the chormosome distribution of genes called DE at 5% of FDR
+sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)
+
+# Fetch gene identifiers of DE genes with FDR < 5%
+DEgenes <- rownames(tt)[tt$adj.P.Val < FDRcutoff]
+DEgenes_symbol <- tt$symbol[tt$adj.P.Val < FDRcutoff]
+length(DEgenes)
+```
+
+Using this simple analysis, the results obtained are `r length(DEgenes)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+
+
+Assess accuracy in terms of recall and precision:
+
+```{r}
+# Calculate the recall as the fraction of genes with documented type-specific expression that we have called DE
+# Calculate the precision as the fraction of DE genes with documented type-specific expression
+```
+
+Two useful diagnostic plots for DE analysis are the distributions of p-values and moderated t-statistics:
+
+```{r}
+par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
+hist(tt$adj.P.Val, xlab = "Raw P-values", main = "", las = 1)
+qqt(fit$t[, 2], df = fit$df.prior + fit$df.residual, main = "", pch = ".", cex = 3)
+abline(0, 1, lwd = 2)
+```
+
+### 2. Fit adjusting for the mean-variance relationship
+
+RNA-seq counts may vary considerably from sample to sample for the same gene and different samples may be sequenced to different depths. This may lead to identical CPM values for very different count sizes and motivates the need to model the mean-variance trend of log-CPM values at the individual observation level.
+
+What we will do is to calculate weights that estimate the mean-variance relationship at individual observation-by-gene level.
+
+```{r}
+v <- voom(dge, design, plot=TRUE)
+```
+
+Now, we will fit again the linear model this time using the voom weights:
+
+```{r}
+fit2 <- lmFit(v, design)
+```
+
+Calculate again moderated t-statistics:
+
+```{r}
+fit2 <- eBayes(fit2)
+```
+
+Examine the extent of differential expression at 5% FDR:
+
+```{r}
+res2 <- decideTests(fit2, p.value = FDRcutoff)
+summary(res2)
+```
+
+Add gene metadata and fetch table of results:
+
+```{r}
+fit2$genes <- genesmd
+tt2 <- topTable(fit2, coef = 2, n = Inf)
+head(tt2)
+table(tt$adj.P.Val < FDRcutoff)
+
+# Fetch gene identifiers of DE genes with FDR < 5%
+DEgenes2 <- rownames(tt2)[tt2$adj.P.Val < FDRcutoff]
+DEgenes_symbol2 <- tt2$symbol[tt2$adj.P.Val < FDRcutoff]
+length(DEgenes2)
+```
+
+Examine again the chromosome distribution of genes called DE at 10% FDR:
+
+```{r}
+sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)
+# Assess again the acuraccy
+####
+```
+
+Using this approach, the results obtained are `r length(DEgenes2)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+
+
+Examine diagnostic plots for limma DE analysis with voom weights:
+
+```{r}
+par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
+hist(tt2$P.Value, xlab = "Raw P-values", main = "", las = 1)
+qqt(fit2$t[, 2], df = fit2$df.prior + fit2$df.residual, main = "", pch = ".", cex = 3)
+abline(0, 1, lwd = 2)
+```
+
+
+### 3. Adjust for known covariates
+
+Consider the phenotypic data. We will try to identify **potential sources of unwanted variation**:
+
+```{r}
+#colData(se)
+# Some possible sources of unwanted variation:
+table(se$tumor_invasion_percent)
+table(se$age_at_diagnosis)
+table(se$ethnicity)
+table(se$race)
+table(se$histologic_diagnosis)
+table(se$bcr_patient_barcode)
+table(substr(se$bcr_patient_barcode, 6, 7))
+```
+
+Now, we are going to adjust for the `histologic_diagnosis` factor. We need to start over building a new design matrix that includes that factor.
+
+```{r}
+design <- model.matrix(~type + substr(se$bcr_patient_barcode, 6, 7), data = colData(se))
+# design <- model.matrix(~type + bcr_patient_barcode, data = colData(se))
+```
+
+Tissue Source Site 
+- AJ: International Genomics Consortium 
+- AX: Gynecologic Oncology Group 
+- BG: University of Pittsburgh 
+- BK: Christiana Healthcare 
+- DI: MD Anderson 
+- E6: Roswell Park
+
+Fit again the linear models for each gene with the updated design matrix:
+
+```{r}
+fit3 <- lmFit(v, design)
+# Calculate moderated t-statistics:
+fit3 <- eBayes(fit3)
+```
+
+Examine the extent of differential expression at 10% FDR:
+
+```{r}
+res3 <- decideTests(fit3, p.value = FDRcutoff)
+summary(res3)
+```
+
+Add gene metadata and fetch table of results:
+
+```{r}
+fit3$genes <- genesmd
+tt3 <- topTable(fit3, coef = 2, n = Inf)
+head(tt3)
+# Fetch gene identifiers of DE genes with FDR < 5%
+DEgenes3 <- rownames(tt3)[tt3$adj.P.Val < FDRcutoff]
+DEgenes_symbol3 <- tt3$symbol[tt3$adj.P.Val < FDRcutoff]
+length(DEgenes3)
+```
+
+Examine the chromosome distribution of genes called DE at 5% FDR:
+
+```{r}
+sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)
+```
+
+Using this approach, the results obtained are `r length(DEgenes3)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+
+Assess accuracy (not possible)
+
+### 4. Adjust for unknown covariates
+
+We can adjust for unkown covariates using surrogate variable analysis (SVA). First, estimate surrogate variables (SVs) from the log-CPM values calculated by voom:
+
+```{r}
+mod0 <- model.matrix(~substr(se$bcr_patient_barcode, 6, 7), colData(se))
+sv <- sva(v$E, mod = design, mod0 = mod0)
+sv$n # number of surrogate variables
+```
+
+Second, we add these surrogate variables (SVs) to the design matrix:
+
+```{r}
+design <- cbind(design, sv$sv)
+colnames(design) <- c(colnames(design)[1:6], paste0("SV", 1:sv$n))
+```
+
+The design matrix looks as follows:
+
+```{r}
+head(design)
+```
+
+Third, we fit again the linear models for each gene with the updated design matrix:
+
+```{r}
+fit4 <- lmFit(v, design)
+```
+
+Fourth, we calculate the moderated t-statistics:
+
+```{r}
+fit4 <- eBayes(fit4)
+```
+
+Finally, we examine the extent of differential expression at 5% FDR:
+
+```{r}
+res4 <- decideTests(fit4, p.value = FDRcutoff)
+summary(res4)
+```
+
+We add the metadata
+
+```{r}
+fit4$genes <- genesmd
+tt4 <- topTable(fit4, coef = 2, n = Inf)
+head(tt4)
+# Fetch gene identifiers of DE genes with FDR < 5%
+DEgenes4 <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
+DEgenes_symbol4 <- tt4$symbol[tt4$adj.P.Val < FDRcutoff]
+length(DEgenes4)
+```
+
+Now, we examine the chromosome distribution of genes called DE at 10% FDR:
+
+```{r}
+sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)
+```
+
+Using this approach, the results obtained are `r length(DEgenes4)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+
+Assess the accuracy:
+
+```{r}
+# DEgenes4 <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
+# r <- c(r, sum(DEgenes4 %in% c(msy, xie))/length(c(msy, xie)))
+# r
+# p <- c(p, sum(DEgenes4 %in% c(msy, xie))/length(DEgenes4))
+# p
+```
+
+And we examine the diagnostic plots for limma DE analysis:
+
+```{r}
+par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
+hist(tt4$P.Value, xlab = "Raw P-values", main = "", las = 1)
+qqt(fit4$t[, 2], df = fit4$df.prior + fit4$df.residual, main = "", pch = ".", cex = 3)
+abline(0, 1, lwd = 2)
+```
+
+
+### Adjust for repeated measurements --> not necessary in our dataset
+
+### Performance comparison --> comparison of the accuracy, but we do not have accuracy
+
+### Volcano plot
+
+A useful diagnostic plot for DE analysis is the so-called volcano plot:
+
+```{r volcanoPlot, echo=TRUE, fig.height=10, fig.width=20, out.height="500px"}
+par(mfrow = c(1, 2), mar = c(4, 5, 3, 2))
+volcanoplot(fit2, coef = 2, highlight = 7, fit2$genes$symbol, main = "Model 2", las = 1)
+volcanoplot(fit4, coef = 2, highlight = 7, fit4$genes$symbol, main = "Model 4", las = 1)
+```
+
+### MA-plot
+
+Another useful diagnostic plot is the MA-plot:
+
+```{r maPlot, echo=TRUE, fig.height=7, fig.width=9, out.height="500px"}
+par(mfrow=c(1, 1))
+top7 <- order(fit4$lods[, 2], decreasing = TRUE)[1:7]
+limma::plotMA(fit4, coef = 2, status = rownames(fit4$lods) %in% DEgenes, legend = FALSE,
+main = "Model 4", hl.pch = 46, hl.cex = 4, bg.pch = 46, bg.cex = 3, las = 1)
+text(fit4$Amean[top7], fit4$coef[top7, 2], fit4$genes$symbol[top7], cex = 0.5, pos = 4)
+```
+
+### Factorial designs
+
+Factorial designs are experimental designs where the outcome of interest consists of two or more factors.
+Here we consider for illustrative purposes the analysis of the interaction between `type` and `substr(se$bcr_patient_barcode, 6, 7)` factors.
+There are several ways to approach this kind of analysis. One that facilitates the interpretation is building a single factor out of the combination of the factors under study and set the intercept term to zero.
+
+```{r}
+newfac <- factor(paste(se$type, substr(se$bcr_patient_barcode, 6, 7), sep = "."))
+head(newfac)
+```
+
+Fit a linear regression model using this new factor variable without intercept term.
+
+```{r}
+design <- model.matrix(~0 + newfac, colData(se))
+head(design, n = 3)
+fit6 <- lmFit(v, design)
+```
+
+Build the contrast matrix that specifies the contrasts of interest between a set of coefficients estimated from a linear regression model. For instance, let's say we want to search for DE genes between 1.5 and 2.5 RNA concentration separately in males and females. Let's try between AX and BG
+
+```{r}
+#table(substr(se$bcr_patient_barcode, 6, 7))
+cont.matrix <- makeContrasts(connormal = newfacnormal.BG - newfacnormal.AX, contumor = newfactumor.BG - newfactumor.AX, levels = design)
+```
+
+Estimate coefficients for a given set of contrasts.
+
+```{r}
+fit6 <- contrasts.fit(fit6, cont.matrix)
+```
+
+Calculate moderated t -statistics.
+
+```{r}
+fit6 <- eBayes(fit6)
+head(fit6$t)
+```
+
+Fetch table of results for each coefficient.
+```{r}
+ttconnormal <- topTable(fit6, coef = "connormal", n = Inf)
+ttcontumor <- topTable(fit6, coef = "contumor", n = Inf)
+```
+
+Explore graphically the overlap of DE genes between contrasts of interest.
+
+```{r}
+res <- decideTests(fit6, p.value = 0.1)
+vennDiagram(res)
+```
+
+### Summary of the results obtained
+
+Approach used | DE genes | Chromosome with more DE
+--------------|----------|------------------------
+1 | `r length(DEgenes)` | `r names(sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+2 | `r length(DEgenes2)` | `r names(sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+3 | `r length(DEgenes3)` | `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+4 | `r length(DEgenes4)` | `r names(sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`
+
+Using this approach, the results obtained are `r length(DEgenes3)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+
+
+## Functional Enrichment: The Gene Ontology analysis
+
+A popular kind of functional enrichment analysis is what people call a _Gene Ontology (GO) analysis_ which often corresponds to applying the one-tailed Fisher's exact test to every gene set in the [GO database](http://www.geneontology.org). Functional enrichment analyses constitute a straightforward way to approach the question of what pathways may be differentially expressed (DE) in our data.
+
+The [GO database project](http://www.geneontology.org) provides a controlled vocabulary to describe gene and gene product attributes in any organism. It consists of so-called _GO terms_, which are pairs of term identifier (GO ID) and description.
+
+There are several R packages at CRAN/Bioconductor that facilitate performing a functional enrichment analysis on the entire collection of GO gene sets. We are going to illustrate this analysis with the Bioconductor package [GOstats](http://www.bioconductor.org/packages/release/bioc/html/GOstats.html).
+
+Doing this analysis with [GOstats](http://www.bioconductor.org/packages/release/bioc/html/GOstats.html) consists of the following three steps:
+
+  1. Build a parameter object with information specifying the gene universe, the set of DE genes, the annotation package to use, etc. as follows:
+
+```{r, tidy=FALSE}
+library(org.Hs.eg.db)
+library(GOstats)
+geneUniverse <- rownames(se)
+params <- new("GOHyperGParams", geneIds=DEgenes, universeGeneIds=geneUniverse,
+                annotation="org.Hs.eg.db", ontology="BP",
+                pvalueCutoff=0.05, testDirection="over")
+```
+
+These type of techniques are limited by the amount of DE genes we have in our data. The total size of the genes involved in the calculation (the gene universe) is critical to the significance level of the results.
+
+  2. Run the functional enrichment analysis.
+  A problem in a GO analysis is that the hierarchy of GO terms and their overlap render highly dependent tests. If parent and a child GO term contain the same genes and both are significant, the child node is more relevant because is more specific.
+  Compute the significance of a GO term conditional on the significance of its children ([Alexa et al.](http://bioinformatics.oxfordjournals.org/content/22/13/1600.abstract, 2006)).
+  
+  Proceed bottom-up removing all genes in a significant GO term from its parents. This is regarded as a __conditional test__.
+  In the [GOstats](http://www.bioconductor.org/packages/release/bioc/html/GOstats.html) package, the conditional test can be used by simply setting the argument `conditional=TRUE` in the parameter object or modifying it as follows:
+  In the case of a GO analysis is important to always perform a conditional test that takes into account the hierarchical structure of GO terms.
+```{r}
+conditional(params) <- TRUE
+
+hgOverCond <- hyperGTest(params)
+hgOverCond
+```
+
+  3. Store and visualize the results.
+
+```{r}
+htmlReport(hgOverCond, file="goconditionaltests.html")
+```
+
+We can find out what methods are available to explore the results in detail. The most directly useful one is the `summary()` method that returns a `data.frame` object with results.
+
+```{r loadGOstats, echo=FALSE}
+library(GOstats)
+summary <- GOstats::summary
+head(summary(hgOverCond))
+```
+
+Storing the results in a `data.frame` object enables an automatic processing and filtering of the results.
+
+```{r}
+goresults <- summary(hgOverCond)
+head(goresults)
+```
+
+GO terms involving a few genes (e.g., < 5) in their size ($m$) and in their enrichment by DE genes are likely to be less reliable than those that involve many genes.
+
+The `OddsRatio` (OR) is a measure of association between an exposure and an outcome. The OR represents the odds that an outcome will occur given a particular exposure, compared to the odds of the outcome occurring in the absence of that exposure.
+
+In order to try to spot the more reliable GO terms we can filter the previous results by a minimum value on the `Count` and `Size` columns and order them by the `OddsRatio` column:
+
+```{r}
+goresults <- goresults[goresults$Size >= 5 & goresults$Count >= 5, ]
+goresults <- goresults[order(goresults$OddsRatio, decreasing=TRUE), ]
+head(goresults)
+```
+
+We can extract the genes that _enrich_ each GO term and paste it to the result as follows:
+
+```{r}
+geneIDs <- geneIdsByCategory(hgOverCond)[goresults$GOBPID]
+geneSYMs <- sapply(geneIDs, function(id) select(org.Hs.eg.db, columns="SYMBOL", key=id, keytype="ENTREZID")$SYMBOL)
+geneSYMs <- sapply(geneSYMs, paste, collapse=", ")
+goresults <- cbind(goresults, Genes=geneSYMs)
+rownames(goresults) <- 1:nrow(goresults)
+```
+
+We can generate an HTML page from a `data.frame` object using the `xtable` package:
+
+```{r}
+library(xtable)
+xtab <- xtable(goresults, align="l|c|r|r|r|r|r|p{3cm}|p{3cm}|")
+print(xtab, file="goresults.html", type="html")
+```
+
+
+## Conclusions
+
+The different QA diagnostics reveal some potentially problematic features in some of the samples (as A2HC-tumor). We may consider discarding those from further analysis.
+
+The main source of variation in this data seems to be driven by the tumor and normal condition of the samples, as seen in the Figure S8.
+
+The extent of expression changes can be augmented when adjusting for surrogate variables estimated with SVA. It would be interesting to observe how that extent changes when discarding potentially problematic samples.
+
+We have not been able to plot the Hierarchical clustering of samples after the SVA adjustment for surrogate variables. Therefore, as we cannot prove that the adjustment of variability has lead to clearer results, we have removed the batch effect with ComBat.
+
+The chosen factor which variability has been removed is the tss (differences depending on the tissue source site). After this modificaction, the Hierarchical clustering plot showed a better stratification of the tumor and normal samples.
+
+## Session information
+
+```{r}
+sessionInfo()
+```

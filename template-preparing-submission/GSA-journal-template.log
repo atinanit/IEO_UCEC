@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.6.15)  16 JUN 2016 22:23
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.6.15)  17 JUN 2016 10:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1534,13 +1534,20 @@ LaTeX Font Info:    Font shape `T1/phv/b/it' in size <9> not available
 LaTeX Font Info:    Font shape `T1/phv/b/sl' will be
 (Font)              scaled to size 8.54997pt on input line 97.
 
-Underfull \vbox (badness 1796) has occurred while \output is active []
+Underfull \hbox (badness 2662) in paragraph at lines 130--131
+[]\T1/ppl/m/n/9 (+20) In the mul-ti-di-men-sional plot (MDS) and the hi-er-chi-
 
- [2]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 179.
+ []
 
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+Underfull \hbox (badness 3009) in paragraph at lines 130--131
+\T1/ppl/m/n/9 (+20) cal clus-ter-ing are shown that TCGA.AX.A2HC.01A and
+ []
+
+[2]
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 175.
+
+ (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 Package microtype Info: Loading generic settings for font family
@@ -1550,25 +1557,25 @@ Package microtype Info: Loading generic settings for font family
 
 
 Package natbib Warning: Citation `neher2013genealogies' on page 3 undefined on 
-input line 179.
+input line 175.
 
 
 Package natbib Warning: Citation `neher2013genealogies' on page 3 undefined on 
-input line 179.
+input line 175.
 
 
 Package natbib Warning: Citation `rodelsperger2014characterization' on page 3 u
-ndefined on input line 179.
+ndefined on input line 175.
 
-<example-figure.png, id=36, 680.3016pt x 332.9238pt>
+<example-figure.png, id=39, 680.3016pt x 332.9238pt>
 File: example-figure.png Graphic file (type png)
  <use example-figure.png>
-Package pdftex.def Info: example-figure.png used on input line 208.
+Package pdftex.def Info: example-figure.png used on input line 204.
 (pdftex.def)             Requested size: 250.14749pt x 122.41278pt.
 File: example-figure.png Graphic file (type png)
 
 <use example-figure.png>
-Package pdftex.def Info: example-figure.png used on input line 221.
+Package pdftex.def Info: example-figure.png used on input line 217.
 (pdftex.def)             Requested size: 250.14749pt x 122.41278pt.
 
 No file GSA-journal-template.bbl.
@@ -1578,25 +1585,25 @@ Package natbib Warning: There were undefined citations.
 
 AED: lastpage setting LastPage
 [3] [4 <./example-figure.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 264.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 264.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 260.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 260.
  (./GSA-journal-template.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 264.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 264.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 260.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 260.
 Package rerunfilecheck Info: File `GSA-journal-template.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 264.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 260.
  ) 
 Here is how much of TeX's memory you used:
- 22552 strings out of 493304
- 377315 string characters out of 6139871
- 512112 words of memory out of 5000000
+ 22549 strings out of 493304
+ 377288 string characters out of 6139871
+ 513112 words of memory out of 5000000
  25255 multiletter control sequences out of 15000+600000
- 80837 words of font info for 240 fonts, out of 8000000 for 9000
+ 80678 words of font info for 238 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  63i,18n,57p,1525b,535s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exi
@@ -1614,10 +1621,10 @@ fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texlive/texmf-dist/fonts/type1
 /urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/palatin
 o/uplb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb
 ></usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on GSA-journal-template.pdf (4 pages, 383941 bytes).
+Output written on GSA-journal-template.pdf (4 pages, 384386 bytes).
 PDF statistics:
- 106 PDF objects out of 1000 (max. 8388607)
- 83 compressed objects within 1 object stream
+ 109 PDF objects out of 1000 (max. 8388607)
+ 86 compressed objects within 1 object stream
  10 named destinations out of 1000 (max. 500000)
  59410 words of extra memory for PDF output out of 61914 (max. 10000000)
 

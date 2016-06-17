@@ -38,9 +38,12 @@ knit_hooks$set(error=function(x, options) stop(x),
 cat(dumpcssfile(file.path("css", "ieo.css")))
 ```
 
+# Supplementary Information: 
 # Analysis of a The Cancer Genome Atlas (TCGA) RNA-seq data set on Uterine Corpus Endometrial Carcinoma (UCEC)
 
-### Joaquim Aguirre (joaquim.aguirre01@estudiant.upf.edu), Gerard Funosas (gfunosas64@gmail.com), Cristina Prat (cristina.prat.ferrer@gmail.com)
+### Joaquim Aguirre (joaquim.aguirre01@estudiant.upf.edu)
+### Gerard Funosas (gfunosas64@gmail.com)
+### Cristina Prat (cristina.prat.ferrer@gmail.com)
 
 ## Introduction
 
@@ -249,7 +252,7 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 ### Distribution of expression levels among samples
 
-The following plot shows the distribution of expression values per sample in terms of logarithmic CPM units. Due to the large number of samples, tumor and normal samples are displayed separately.
+The following plot (Figure S2) shows the distribution of expression values per sample in terms of logarithmic CPM units. Due to the large number of samples, tumor and normal samples are displayed separately.
 
 <!---
 the option echo=FALSE hides the R code. When plotting in general one does not
@@ -311,7 +314,7 @@ assays(se)$logCPM <- cpm(dge, log=TRUE, prior.count=0.5)
 
 ### MA-plots
 
-The MA-plots of the normalized expression profiles are performed. First, the plots corresponding to tumor samples are built:
+The MA-plots of the normalized expression profiles are performed. First, the plots (Figure S4) corresponding to tumor samples are built:
 
 <!---
 Here we make a MA-plot for each sample. The options 'fig.height' and 'fig.width'
@@ -321,8 +324,8 @@ control the relative image size in *inches*. The final image size results from
 'out.width' and 'out.height'. More information at http://yihui.name/knitr/options
 --->
 
-```{r maPlotsTumor, fig.height=36, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
-par(mfrow=c(9,2), mar=c(4, 5, 3, 1))
+```{r maPlotsTumor, fig.height=20, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+par(mfrow=c(6,3), mar=c(4, 5, 3, 1))
 setmp <- se[, se$type == "tumor"]
 dgetmp <- dge[, se$type == "tumor"]
 for (i in 1:ncol(setmp)) {
@@ -337,10 +340,11 @@ for (i in 1:ncol(setmp)) {
 ```
 
 In general, we do not observe samples with major expression-level dependent biases, although some of them show variations in low-expressed values.
-Now, the plots of the normal samples are performed:
 
-```{r maPlotsNormal, fig.height=36, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S5: MA-plots of the normal samples."}
-par(mfrow=c(9,2), mar=c(4, 5, 3, 1))
+Now, the plots (Figure S5) of the normal samples are performed:
+
+```{r maPlotsNormal, fig.height=20, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S5: MA-plots of the normal samples."}
+par(mfrow=c(6,3), mar=c(4, 5, 3, 1))
 setmp <- se[, se$type == "normal"]
 dgetmp <- dge[, se$type == "normal"]
 for (i in 1:ncol(setmp)) {
@@ -469,14 +473,14 @@ se <- se[,mask]
 dge <- dge[,mask]
 ```
 
-With 4 paired samples removed, we need to recalculate the variables:
+With 4 paired samples removed, we need to recalculate the variables and make the hierarchical clustering shown in Figure S8:
 
 ```{r}
 tss <- substr(colnames(se), 6, 7)
 logCPM <- cpm(dge, log=TRUE, prior.count=3)
 ```
 
-```{r sampleClustering_2, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S6: Hierarchical clustering of the samples."}
+```{r sampleClustering_2, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S8: Hierarchical clustering of the samples."}
 par(mfrow=c(1, 1))
 batch <- as.integer(factor(tss))
 sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
@@ -495,9 +499,9 @@ plot(sampleDendrogram, main="Hierarchical clustering of samples")
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
 ```
 
-And get the new MDS plot: 
+And get the new MDS plot as it shown in Figure S9: 
 
-```{r mds3, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S7_3: Multidimensional scaling plot of the samples."}
+```{r mds3, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S9: Multidimensional scaling plot of the samples."}
 plotMDS(dge, labels=outcome, col=batch)
 legend("bottomright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)))
@@ -519,7 +523,7 @@ sampleClustering <- hclust(d)
 
 Let's verify the extent to which batch effect has been removed with the hierarchical clustering of the samples:
 
-```{r sampleClustering_3, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S8: Hierarchical clustering of the samples."}
+```{r sampleClustering_3, fig.height=7, fig.width=14, dpi=100, echo=TRUE, fig.cap="Figure S10: Hierarchical clustering of the samples."}
 par(mfrow=c(1, 1))
 batch <- as.integer(factor(tss))
 sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
@@ -538,7 +542,7 @@ plot(sampleDendrogram, main="Hierarchical clustering of samples")
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
 ```
 
-The plot in Figure S8 shows a better stratification of the tumor and normal samples than in the last plot (Figure S6) without removing the batch effect. 
+The plot in Figure S10 shows a better stratification of the tumor and normal samples than in the last plot (Figure S6) without removing the batch effect. 
 
 
 ## Differential expression: Simple analysis
@@ -556,9 +560,9 @@ pv <- f.pvalue(assays(se)$logCPM, mod, mod0)
 sum(p.adjust(pv, method="fdr") < 0.01)
 ```
 
-There are `r sum(p.adjust(pv, method="fdr") < 0.01)` genes changing significantly their expression at FDR < 1%. In Figure S9 below we show the distribution of the resulting p-values.
+There are `r sum(p.adjust(pv, method="fdr") < 0.01)` genes changing significantly their expression at FDR < 1%. In Figure S11 below we show the distribution of the resulting p-values.
 
-```{r pdist, echo=FALSE, out.width="400px", fig.cap="Figure S9: Distribution of raw p-values for an F-test on every gene between tumor and normal samples."}
+```{r pdist, echo=FALSE, out.width="500px", fig.cap="Figure S11: Distribution of raw p-values for an F-test on every gene between tumor and normal samples."}
 hist(pv, main="", las=1)
 ```
 
@@ -579,9 +583,9 @@ sum(p.adjust(pvsv, method="fdr") < 0.01)
 ```
 
 We have increased the number of changing genes to `r sum(p.adjust(pvsv, method="fdr") < 0.01)`.
-Figure S10 shows the resulting distribution of p-values.
+Figure S12 shows the resulting distribution of p-values.
 
-```{r psvdist, echo=FALSE, out.width="400px", fig.cap="Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA."}
+```{r psvdist, echo=FALSE, out.width="500px", fig.cap="Figure S12: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA."}
 hist(pvsv, main="", las=1)
 ```
 
@@ -646,9 +650,9 @@ summary(res)
 ```
 
 It can be observed that:
-- 3246 genes are underexpressed in tumor samples
-- 3161 genes are overexpressed in tumor samples
-- 5164 genes are not differentially expressed
+- 3249 genes are underexpressed in tumor samples
+- 3208 genes are overexpressed in tumor samples
+- 5114 genes are not differentially expressed
 
 To obtain a full table of all results we should use the function `topTable()` as follows:
 
@@ -677,9 +681,9 @@ sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 Using this simple model, the results obtained are **`r length(DEgenes)` DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
 
-Two useful diagnostic plots for DE analysis are the distributions of p-values and moderated t-statistics:
+Two useful diagnostic plots (Figure S13) for DE analysis are the distributions of p-values and moderated t-statistics:
 
-```{r fit1_diagnostic, echo=FALSE, fig.cap="Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model"}
+```{r fit1_diagnostic, fig.height=4, fig.width=10, out.height="300px", echo=FALSE, fig.cap="Figure S13: Distribution of p-values and moderated t-statistics for the directly fitted model"}
 par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
 hist(tt$adj.P.Val, xlab = "Raw P-values", main = "", las = 1)
 qqt(fit$t[, 2], df = fit$df.prior + fit$df.residual, main = "", pch = ".", cex = 3)
@@ -690,9 +694,9 @@ abline(0, 1, lwd = 2)
 
 RNA-seq counts may vary considerably from sample to sample for the same gene and different samples may be sequenced to different depths. This may lead to identical CPM values for very different count sizes and motivates the need to model the mean-variance trend of log-CPM values at the individual observation level.
 
-What we will do is to calculate weights that estimate the mean-variance relationship at individual observation-by-gene level.
+What we will do is to calculate weights that estimate the mean-variance relationship at individual observation-by-gene level as Figure S14 shows:
 
-```{r fit2_voom, fig.cap="Figure S12: Mean-variance relationship at individual observation-by-gene level"}
+```{r fit2_voom, fig.height=6, fig.width=7, out.height="500px", tidy=FALSE, fig.cap="Figure S14: Mean-variance relationship at individual observation-by-gene level"}
 v <- voom(dge, design, plot=TRUE)
 ```
 
@@ -736,9 +740,9 @@ sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 Using this approach, the results obtained are **`r length(DEgenes2)` DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt2$chr[tt2$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
 
-The diagnostic plots for limma DE analysis with voom weights are the following:
+The diagnostic plots (Figure S15) for limma DE analysis with voom weights are the following:
 
-```{r fit2_diagnostic, echo=FALSE, fig.cap="Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights"}
+```{r fit2_diagnostic, fig.height=4, fig.width=10, out.height="300px", echo=FALSE, fig.cap="Figure S15: Distribution of p-values and moderated t-statistics for the model with voom weights"}
 par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
 hist(tt2$P.Value, xlab = "Raw P-values", main = "", las = 1)
 qqt(fit2$t[, 2], df = fit2$df.prior + fit2$df.residual, main = "", pch = ".", cex = 3)
@@ -856,14 +860,15 @@ sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 Using this approach, there are **`r length(DEgenes4)` DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
 
-Now, it is possible to examine the diagnostic plots for the DE analysis using this approach:
+Now, it is possible to examine the diagnostic plots (Figure S16) for the DE analysis using this approach:
 
-```{r fit4_diagnostic, echo=FALSE, fig.cap="Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA"}
+```{r fit4_diagnostic, fig.height=4, fig.width=10, out.height="300px", echo=FALSE, fig.cap="Figure S16: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA"}
 par(mfrow = c(1, 2), mar = c(4, 5, 2, 2))
 hist(tt4$P.Value, xlab = "Raw P-values", main = "", las = 1)
 qqt(fit4$t[, 2], df = fit4$df.prior + fit4$df.residual, main = "", pch = ".", cex = 3)
 abline(0, 1, lwd = 2)
 ```
+
 
 ### Summary of the obtained results and choice of the model
 
@@ -882,19 +887,19 @@ The number of DE genes importantly increases in the fourth model with respect to
 
 ### Volcano plot
 
-A useful diagnostic plot for DE analysis is the so-called volcano plot. As it was said, we will use the model 4 corresponding to the adjust of known covariates plus the SVA, but we will compare it to the volcano plot of the model 2. The remarked genes in volcano plots change. For model 4, they are MIR4298, TSN, RNF122, CALHM2, TSG101, CACNA1S and SCARNA5.
+A useful diagnostic plot for DE analysis is the so-called volcano plot (Figure S17). As it was said, we will use the model 4 corresponding to the adjust of known covariates plus the SVA, but we will compare it to the volcano plot of the model 2. The remarked genes in volcano plots change. For model 4, they are MIR4298, TSN, RNF122, CALHM2, TSG101, CACNA1S and SCARNA5.
 
-```{r volcanoPlot, echo=FALSE, fig.height=10, fig.width=20, out.height="500px", fig.cap="Figure S15: Volcano plots for models 2 and 4"}
-par(mfrow = c(1, 2), mar = c(4, 5, 3, 2))
+```{r volcanoPlot, echo=FALSE, fig.height=6, fig.width=10, out.height="500px", fig.cap="Figure S17: Volcano plots for models 2 and 4"}
+par(mfrow=c(1,2), mar=c(4, 5, 3, 2))
 volcanoplot(fit2, coef = 2, highlight = 7, fit2$genes$symbol, main = "Model 2", las = 1)
 volcanoplot(fit4, coef = 2, highlight = 7, fit4$genes$symbol, main = "Model 4", las = 1)
 ```
 
 ### MA-plot
 
-Another useful diagnostic plot is the MA-plot:
+Another useful diagnostic plot (Figure S18) is the MA-plot:
 
-```{r maPlot, echo=FALSE, fig.height=7, fig.width=9, out.height="500px", fig.cap="Figure S16: MA-plot for model 4"}
+```{r maPlot, echo=FALSE, fig.height=6, fig.width=10, out.height="500px", fig.cap="Figure S18: MA-plot for model 4"}
 par(mfrow=c(1, 1))
 top7 <- order(fit4$lods[, 2], decreasing = TRUE)[1:7]
 limma::plotMA(fit4, coef = 2, status = rownames(fit4$lods) %in% DEgenes, legend = FALSE,
@@ -947,9 +952,9 @@ ttconnormal <- topTable(fit6, coef = "connormal", n = Inf)
 ttcontumor <- topTable(fit6, coef = "contumor", n = Inf)
 ```
 
-Explore graphically the overlap of DE genes between contrasts of interest.
+Explore graphically the overlap of DE genes between contrasts of interest (Figure S19):
 
-```{r}
+```{r vennDiagram, echo=FALSE, fig.height=4, fig.width=5, out.height="300px", fig.cap="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest"}
 res <- decideTests(fit6, p.value = 0.1)
 vennDiagram(res)
 ```
@@ -966,20 +971,20 @@ There are several R packages at CRAN/Bioconductor that facilitate performing a f
 
 Doing this analysis with [GOstats](http://www.bioconductor.org/packages/release/bioc/html/GOstats.html) consists of the following three steps:
 
-  1. Build a parameter object with information specifying the gene universe, the set of DE genes, the annotation package to use, etc. as follows:
+1. Build a parameter object with information specifying the gene universe, the set of DE genes, the annotation package to use, etc. as follows:
 
 ```{r, tidy=FALSE}
 library(org.Hs.eg.db)
 library(GOstats)
 geneUniverse <- rownames(se)
-params <- new("GOHyperGParams", geneIds=DEgenes, universeGeneIds=geneUniverse,
+params <- new("GOHyperGParams", geneIds=DEgenes4, universeGeneIds=geneUniverse,
                 annotation="org.Hs.eg.db", ontology="BP",
                 pvalueCutoff=0.05, testDirection="over")
 ```
 
 These type of techniques are limited by the amount of DE genes we have in our data. The total size of the genes involved in the calculation (the gene universe) is critical to the significance level of the results.
 
-  2. Run the functional enrichment analysis.
+2. Run the functional enrichment analysis.
   A problem in a GO analysis is that the hierarchy of GO terms and their overlap render highly dependent tests. If parent and a child GO term contain the same genes and both are significant, the child node is more relevant because is more specific.
   Compute the significance of a GO term conditional on the significance of its children ([Alexa et al.](http://bioinformatics.oxfordjournals.org/content/22/13/1600.abstract, 2006)).
   
@@ -993,7 +998,7 @@ hgOverCond <- hyperGTest(params)
 hgOverCond
 ```
 
-  3. Store and visualize the results.
+3. Store and visualize the results.
 
 ```{r}
 htmlReport(hgOverCond, file="goconditionaltests.html")
@@ -1011,7 +1016,7 @@ Storing the results in a `data.frame` object enables an automatic processing and
 
 ```{r}
 goresults <- summary(hgOverCond)
-head(goresults)
+goresults[1:10,]
 ```
 
 GO terms involving a few genes (e.g., < 5) in their size ($m$) and in their enrichment by DE genes are likely to be less reliable than those that involve many genes.

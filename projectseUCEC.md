@@ -244,9 +244,12 @@ span.toc-section-number::after {
 }
 </style>
 
+# Supplementary Information: 
 # Analysis of a The Cancer Genome Atlas (TCGA) RNA-seq data set on Uterine Corpus Endometrial Carcinoma (UCEC)
 
-### Joaquim Aguirre (joaquim.aguirre01@estudiant.upf.edu), Gerard Funosas (gfunosas64@gmail.com), Cristina Prat (cristina.prat.ferrer@gmail.com)
+### Joaquim Aguirre (joaquim.aguirre01@estudiant.upf.edu)
+### Gerard Funosas (gfunosas64@gmail.com)
+### Cristina Prat (cristina.prat.ferrer@gmail.com)
 
 ## Introduction
 
@@ -779,7 +782,7 @@ The plot showing the filtered library sizes after the random subsetting is repre
 
 ### Distribution of expression levels among samples
 
-The following plot shows the distribution of expression values per sample in terms of logarithmic CPM units. Due to the large number of samples, tumor and normal samples are displayed separately.
+The following plot (Figure S2) shows the distribution of expression values per sample in terms of logarithmic CPM units. Due to the large number of samples, tumor and normal samples are displayed separately.
 
 <!---
 the option echo=FALSE hides the R code. When plotting in general one does not
@@ -860,7 +863,7 @@ assays(se)$logCPM <- cpm(dge, log=TRUE, prior.count=0.5)
 
 ### MA-plots
 
-The MA-plots of the normalized expression profiles are performed. First, the plots corresponding to tumor samples are built:
+The MA-plots of the normalized expression profiles are performed. First, the plots (Figure S4) corresponding to tumor samples are built:
 
 <!---
 Here we make a MA-plot for each sample. The options 'fig.height' and 'fig.width'
@@ -873,7 +876,8 @@ control the relative image size in *inches*. The final image size results from
 <img src="figure/maPlotsTumor-1.png" title="Figure S4: MA-plots of the tumor samples." alt="Figure S4: MA-plots of the tumor samples." style="display: block; margin: auto;" /><p class="caption">Figure S4: MA-plots of the tumor samples.</p>
 
 In general, we do not observe samples with major expression-level dependent biases, although some of them show variations in low-expressed values.
-Now, the plots of the normal samples are performed:
+
+Now, the plots (Figure S5) of the normal samples are performed:
 
 <img src="figure/maPlotsNormal-1.png" title="Figure S5: MA-plots of the normal samples." alt="Figure S5: MA-plots of the normal samples." style="display: block; margin: auto;" /><p class="caption">Figure S5: MA-plots of the normal samples.</p>
 
@@ -1045,7 +1049,7 @@ se <- se[,mask]
 dge <- dge[,mask]
 ```
 
-With 4 paired samples removed, we need to recalculate the variables:
+With 4 paired samples removed, we need to recalculate the variables and make the hierarchical clustering shown in Figure S8:
 
 
 ```r
@@ -1073,9 +1077,9 @@ plot(sampleDendrogram, main="Hierarchical clustering of samples")
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
 ```
 
-<img src="figure/sampleClustering_2-1.png" title="Figure S6: Hierarchical clustering of the samples." alt="Figure S6: Hierarchical clustering of the samples." style="display: block; margin: auto;" /><p class="caption">Figure S6: Hierarchical clustering of the samples.</p>
+<img src="figure/sampleClustering_2-1.png" title="Figure S8: Hierarchical clustering of the samples." alt="Figure S8: Hierarchical clustering of the samples." style="display: block; margin: auto;" /><p class="caption">Figure S8: Hierarchical clustering of the samples.</p>
 
-And get the new MDS plot: 
+And get the new MDS plot as it shown in Figure S9: 
 
 
 ```r
@@ -1084,7 +1088,7 @@ legend("bottomright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)))
 ```
 
-<img src="figure/mds3-1.png" title="Figure S7_3: Multidimensional scaling plot of the samples." alt="Figure S7_3: Multidimensional scaling plot of the samples." style="display: block; margin: auto;" /><p class="caption">Figure S7_3: Multidimensional scaling plot of the samples.</p>
+<img src="figure/mds3-1.png" title="Figure S9: Multidimensional scaling plot of the samples." alt="Figure S9: Multidimensional scaling plot of the samples." style="display: block; margin: auto;" /><p class="caption">Figure S9: Multidimensional scaling plot of the samples.</p>
 
 ### Removing batch effect: ComBat
 
@@ -1165,9 +1169,9 @@ plot(sampleDendrogram, main="Hierarchical clustering of samples")
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
 ```
 
-<img src="figure/sampleClustering_3-1.png" title="Figure S8: Hierarchical clustering of the samples." alt="Figure S8: Hierarchical clustering of the samples." style="display: block; margin: auto;" /><p class="caption">Figure S8: Hierarchical clustering of the samples.</p>
+<img src="figure/sampleClustering_3-1.png" title="Figure S10: Hierarchical clustering of the samples." alt="Figure S10: Hierarchical clustering of the samples." style="display: block; margin: auto;" /><p class="caption">Figure S10: Hierarchical clustering of the samples.</p>
 
-The plot in Figure S8 shows a better stratification of the tumor and normal samples than in the last plot (Figure S6) without removing the batch effect. 
+The plot in Figure S10 shows a better stratification of the tumor and normal samples than in the last plot (Figure S6) without removing the batch effect. 
 
 
 ## Differential expression: Simple analysis
@@ -1190,9 +1194,9 @@ sum(p.adjust(pv, method="fdr") < 0.01)
 [1] 5093
 ```
 
-There are 5093 genes changing significantly their expression at FDR < 1%. In Figure S9 below we show the distribution of the resulting p-values.
+There are 5093 genes changing significantly their expression at FDR < 1%. In Figure S11 below we show the distribution of the resulting p-values.
 
-<img src="figure/pdist-1.png" title="Figure S9: Distribution of raw p-values for an F-test on every gene between tumor and normal samples." alt="Figure S9: Distribution of raw p-values for an F-test on every gene between tumor and normal samples." width="400px" style="display: block; margin: auto;" /><p class="caption">Figure S9: Distribution of raw p-values for an F-test on every gene between tumor and normal samples.</p>
+<img src="figure/pdist-1.png" title="Figure S11: Distribution of raw p-values for an F-test on every gene between tumor and normal samples." alt="Figure S11: Distribution of raw p-values for an F-test on every gene between tumor and normal samples." width="500px" style="display: block; margin: auto;" /><p class="caption">Figure S11: Distribution of raw p-values for an F-test on every gene between tumor and normal samples.</p>
 
 Now, let's estimate surrogate variables using the `sva()` function.
 
@@ -1229,9 +1233,9 @@ sum(p.adjust(pvsv, method="fdr") < 0.01)
 ```
 
 We have increased the number of changing genes to 6722.
-Figure S10 shows the resulting distribution of p-values.
+Figure S12 shows the resulting distribution of p-values.
 
-<img src="figure/psvdist-1.png" title="Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA." alt="Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA." width="400px" style="display: block; margin: auto;" /><p class="caption">Figure S10: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA.</p>
+<img src="figure/psvdist-1.png" title="Figure S12: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA." alt="Figure S12: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA." width="500px" style="display: block; margin: auto;" /><p class="caption">Figure S12: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA.</p>
 
 
 ## Differential expression: Extended analysis
@@ -1315,9 +1319,9 @@ summary(res)
 ```
 
 It can be observed that:
-- 3246 genes are underexpressed in tumor samples
-- 3161 genes are overexpressed in tumor samples
-- 5164 genes are not differentially expressed
+- 3249 genes are underexpressed in tumor samples
+- 3208 genes are overexpressed in tumor samples
+- 5114 genes are not differentially expressed
 
 To obtain a full table of all results we should use the function `topTable()` as follows:
 
@@ -1403,22 +1407,22 @@ chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt
 Using this simple model, the results obtained are **6457 DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
-Two useful diagnostic plots for DE analysis are the distributions of p-values and moderated t-statistics:
+Two useful diagnostic plots (Figure S13) for DE analysis are the distributions of p-values and moderated t-statistics:
 
-<img src="figure/fit1_diagnostic-1.png" title="Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model" alt="Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model" style="display: block; margin: auto;" /><p class="caption">Figure S11: Distribution of p-values and moderated t-statistics for the directly fitted model</p>
+<img src="figure/fit1_diagnostic-1.png" title="Figure S13: Distribution of p-values and moderated t-statistics for the directly fitted model" alt="Figure S13: Distribution of p-values and moderated t-statistics for the directly fitted model" height="300px" style="display: block; margin: auto;" /><p class="caption">Figure S13: Distribution of p-values and moderated t-statistics for the directly fitted model</p>
 
 ### 2. Fit adjusting for the mean-variance relationship
 
 RNA-seq counts may vary considerably from sample to sample for the same gene and different samples may be sequenced to different depths. This may lead to identical CPM values for very different count sizes and motivates the need to model the mean-variance trend of log-CPM values at the individual observation level.
 
-What we will do is to calculate weights that estimate the mean-variance relationship at individual observation-by-gene level.
+What we will do is to calculate weights that estimate the mean-variance relationship at individual observation-by-gene level as Figure S14 shows:
 
 
 ```r
 v <- voom(dge, design, plot=TRUE)
 ```
 
-<img src="figure/fit2_voom-1.png" title="Figure S12: Mean-variance relationship at individual observation-by-gene level" alt="Figure S12: Mean-variance relationship at individual observation-by-gene level" style="display: block; margin: auto;" /><p class="caption">Figure S12: Mean-variance relationship at individual observation-by-gene level</p>
+<img src="figure/fit2_voom-1.png" title="Figure S14: Mean-variance relationship at individual observation-by-gene level" alt="Figure S14: Mean-variance relationship at individual observation-by-gene level" height="500px" style="display: block; margin: auto;" /><p class="caption">Figure S14: Mean-variance relationship at individual observation-by-gene level</p>
 
 Now, we will fit again the linear model this time using the voom weights:
 
@@ -1506,9 +1510,9 @@ chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt
 Using this approach, the results obtained are **6441 DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
-The diagnostic plots for limma DE analysis with voom weights are the following:
+The diagnostic plots (Figure S15) for limma DE analysis with voom weights are the following:
 
-<img src="figure/fit2_diagnostic-1.png" title="Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights" alt="Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights" style="display: block; margin: auto;" /><p class="caption">Figure S13: Distribution of p-values and moderated t-statistics for the model with voom weights</p>
+<img src="figure/fit2_diagnostic-1.png" title="Figure S15: Distribution of p-values and moderated t-statistics for the model with voom weights" alt="Figure S15: Distribution of p-values and moderated t-statistics for the model with voom weights" height="300px" style="display: block; margin: auto;" /><p class="caption">Figure S15: Distribution of p-values and moderated t-statistics for the model with voom weights</p>
 
 
 ### 3. Adjust for known covariates
@@ -1697,26 +1701,26 @@ TCGA.AX.A05Y.01A.11R.A00V.07                                      0
 TCGA.AX.A0IZ.01A.11R.A118.07                                      0
 TCGA.AX.A0J0.01A.11R.A109.07                                      0
                                       SV1         SV2         SV3
-TCGA.AJ.A3NC.01A.11R.A22K.07  0.102406869 -0.12182878  0.27746076
-TCGA.AJ.A3NE.01A.11R.A22K.07  0.065448684 -0.28952300  0.15155429
-TCGA.AJ.A3NH.01A.11R.A22K.07 -0.003567403  0.05556203  0.07984721
-TCGA.AX.A05Y.01A.11R.A00V.07  0.223533483  0.12012572 -0.38638515
-TCGA.AX.A0IZ.01A.11R.A118.07  0.156016392 -0.27855529 -0.01448107
-TCGA.AX.A0J0.01A.11R.A109.07 -0.203823846  0.08789727 -0.08187704
-                                     SV4         SV5         SV6
-TCGA.AJ.A3NC.01A.11R.A22K.07 -0.17994665  0.08821434 -0.18239974
-TCGA.AJ.A3NE.01A.11R.A22K.07 -0.03438035 -0.30359959 -0.13958625
-TCGA.AJ.A3NH.01A.11R.A22K.07 -0.05125137  0.08454969  0.36926080
-TCGA.AX.A05Y.01A.11R.A00V.07  0.19848949  0.08507325 -0.26517806
-TCGA.AX.A0IZ.01A.11R.A118.07 -0.23306995 -0.34590747 -0.11788951
-TCGA.AX.A0J0.01A.11R.A109.07 -0.25701563  0.20416750  0.07020241
+TCGA.AJ.A3NC.01A.11R.A22K.07  0.102406867 -0.12182878  0.27746076
+TCGA.AJ.A3NE.01A.11R.A22K.07  0.065448685 -0.28952299  0.15155428
+TCGA.AJ.A3NH.01A.11R.A22K.07 -0.003567402  0.05556203  0.07984722
+TCGA.AX.A05Y.01A.11R.A00V.07  0.223533482  0.12012572 -0.38638515
+TCGA.AX.A0IZ.01A.11R.A118.07  0.156016394 -0.27855529 -0.01448108
+TCGA.AX.A0J0.01A.11R.A109.07 -0.203823845  0.08789727 -0.08187703
+                                     SV4         SV5        SV6
+TCGA.AJ.A3NC.01A.11R.A22K.07 -0.17994665  0.08821435 -0.1823997
+TCGA.AJ.A3NE.01A.11R.A22K.07 -0.03438036 -0.30359958 -0.1395863
+TCGA.AJ.A3NH.01A.11R.A22K.07 -0.05125137  0.08454970  0.3692608
+TCGA.AX.A05Y.01A.11R.A00V.07  0.19848950  0.08507325 -0.2651780
+TCGA.AX.A0IZ.01A.11R.A118.07 -0.23306996 -0.34590747 -0.1178895
+TCGA.AX.A0J0.01A.11R.A109.07 -0.25701562  0.20416751  0.0702024
                                       SV7         SV8         SV9
-TCGA.AJ.A3NC.01A.11R.A22K.07  0.117946610 -0.03003028  0.03190465
-TCGA.AJ.A3NE.01A.11R.A22K.07  0.285120986  0.09296381 -0.05701625
-TCGA.AJ.A3NH.01A.11R.A22K.07  0.003551297 -0.45397797  0.11067228
-TCGA.AX.A05Y.01A.11R.A00V.07 -0.389586836 -0.24884878 -0.32586872
-TCGA.AX.A0IZ.01A.11R.A118.07  0.084247726  0.13700105  0.01980260
-TCGA.AX.A0J0.01A.11R.A109.07 -0.134303513  0.27996279 -0.13762299
+TCGA.AJ.A3NC.01A.11R.A22K.07  0.117946601 -0.03003028  0.03190464
+TCGA.AJ.A3NE.01A.11R.A22K.07  0.285120989  0.09296381 -0.05701625
+TCGA.AJ.A3NH.01A.11R.A22K.07  0.003551288 -0.45397798  0.11067229
+TCGA.AX.A05Y.01A.11R.A00V.07 -0.389586848 -0.24884877 -0.32586873
+TCGA.AX.A0IZ.01A.11R.A118.07  0.084247725  0.13700103  0.01980261
+TCGA.AX.A0J0.01A.11R.A109.07 -0.134303520  0.27996280 -0.13762299
 ```
 
 Third, we fit again the linear models for each gene with the updated design matrix, and calculate the moderated t-statistics:
@@ -1783,9 +1787,10 @@ chr11_JH159137v1_alt chr17_GL000258v2_alt chr19_KI270921v1_alt
 Using this approach, there are **7845 DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
-Now, it is possible to examine the diagnostic plots for the DE analysis using this approach:
+Now, it is possible to examine the diagnostic plots (Figure S16) for the DE analysis using this approach:
 
-<img src="figure/fit4_diagnostic-1.png" title="Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA" alt="Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA" style="display: block; margin: auto;" /><p class="caption">Figure S14: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA</p>
+<img src="figure/fit4_diagnostic-1.png" title="Figure S16: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA" alt="Figure S16: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA" height="300px" style="display: block; margin: auto;" /><p class="caption">Figure S16: Distribution of p-values and moderated t-statistics for the model with known covariates and SVA</p>
+
 
 ### Summary of the obtained results and choice of the model
 
@@ -1804,15 +1809,15 @@ The number of DE genes importantly increases in the fourth model with respect to
 
 ### Volcano plot
 
-A useful diagnostic plot for DE analysis is the so-called volcano plot. As it was said, we will use the model 4 corresponding to the adjust of known covariates plus the SVA, but we will compare it to the volcano plot of the model 2. The remarked genes in volcano plots change. For model 4, they are MIR4298, TSN, RNF122, CALHM2, TSG101, CACNA1S and SCARNA5.
+A useful diagnostic plot for DE analysis is the so-called volcano plot (Figure S17). As it was said, we will use the model 4 corresponding to the adjust of known covariates plus the SVA, but we will compare it to the volcano plot of the model 2. The remarked genes in volcano plots change. For model 4, they are MIR4298, TSN, RNF122, CALHM2, TSG101, CACNA1S and SCARNA5.
 
-<img src="figure/volcanoPlot-1.png" title="Figure S15: Volcano plots for models 2 and 4" alt="Figure S15: Volcano plots for models 2 and 4" height="500px" style="display: block; margin: auto;" /><p class="caption">Figure S15: Volcano plots for models 2 and 4</p>
+<img src="figure/volcanoPlot-1.png" title="Figure S17: Volcano plots for models 2 and 4" alt="Figure S17: Volcano plots for models 2 and 4" height="500px" style="display: block; margin: auto;" /><p class="caption">Figure S17: Volcano plots for models 2 and 4</p>
 
 ### MA-plot
 
-Another useful diagnostic plot is the MA-plot:
+Another useful diagnostic plot (Figure S18) is the MA-plot:
 
-<img src="figure/maPlot-1.png" title="Figure S16: MA-plot for model 4" alt="Figure S16: MA-plot for model 4" height="500px" style="display: block; margin: auto;" /><p class="caption">Figure S16: MA-plot for model 4</p>
+<img src="figure/maPlot-1.png" title="Figure S18: MA-plot for model 4" alt="Figure S18: MA-plot for model 4" height="500px" style="display: block; margin: auto;" /><p class="caption">Figure S18: MA-plot for model 4</p>
 
 ### Factorial designs
 
@@ -1888,12 +1893,12 @@ head(fit6$t)
 ```
     Contrasts
       connormal   contumor
-  1  -0.7549415 -1.2021021
-  2  -1.2937425 -0.2792749
-  12 -0.1547739  0.2578308
-  14  1.1159453  1.2253475
-  16  0.5317560  0.9504076
-  18 -0.3183162 -1.4248840
+  1  -0.2655023 -0.2593460
+  2  -1.9442266 -0.5884159
+  12 -0.5951888  0.8157689
+  14  1.6885430  0.7683610
+  16 -0.4830050  2.3325289
+  18  0.7823703  0.5678817
 ```
 
 Fetch table of results for each coefficient.
@@ -1903,15 +1908,9 @@ ttconnormal <- topTable(fit6, coef = "connormal", n = Inf)
 ttcontumor <- topTable(fit6, coef = "contumor", n = Inf)
 ```
 
-Explore graphically the overlap of DE genes between contrasts of interest.
+Explore graphically the overlap of DE genes between contrasts of interest (Figure S19):
 
-
-```r
-res <- decideTests(fit6, p.value = 0.1)
-vennDiagram(res)
-```
-
-<img src="figure/unnamed-chunk-58-1.png" title="plot of chunk unnamed-chunk-58" alt="plot of chunk unnamed-chunk-58" style="display: block; margin: auto;" />
+<img src="figure/vennDiagram-1.png" title="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest" alt="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest" height="300px" style="display: block; margin: auto;" /><p class="caption">Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest</p>
 
 
 
@@ -1925,7 +1924,7 @@ There are several R packages at CRAN/Bioconductor that facilitate performing a f
 
 Doing this analysis with [GOstats](http://www.bioconductor.org/packages/release/bioc/html/GOstats.html) consists of the following three steps:
 
-  1. Build a parameter object with information specifying the gene universe, the set of DE genes, the annotation package to use, etc. as follows:
+1. Build a parameter object with information specifying the gene universe, the set of DE genes, the annotation package to use, etc. as follows:
 
 
 ```r
@@ -1991,14 +1990,14 @@ The following object is masked from 'package:AnnotationDbi':
 
 ```r
 geneUniverse <- rownames(se)
-params <- new("GOHyperGParams", geneIds=DEgenes, universeGeneIds=geneUniverse,
+params <- new("GOHyperGParams", geneIds=DEgenes4, universeGeneIds=geneUniverse,
                 annotation="org.Hs.eg.db", ontology="BP",
                 pvalueCutoff=0.05, testDirection="over")
 ```
 
 These type of techniques are limited by the amount of DE genes we have in our data. The total size of the genes involved in the calculation (the gene universe) is critical to the significance level of the results.
 
-  2. Run the functional enrichment analysis.
+2. Run the functional enrichment analysis.
   A problem in a GO analysis is that the hierarchy of GO terms and their overlap render highly dependent tests. If parent and a child GO term contain the same genes and both are significant, the child node is more relevant because is more specific.
   Compute the significance of a GO term conditional on the significance of its children ([Alexa et al.](http://bioinformatics.oxfordjournals.org/content/22/13/1600.abstract, 2006)).
   
@@ -2015,13 +2014,13 @@ hgOverCond
 
 ```
 Gene to GO BP Conditional test for over-representation 
-11238 GO BP ids tested (183 have p < 0.05)
-Selected gene set size: 5001 
+11783 GO BP ids tested (131 have p < 0.05)
+Selected gene set size: 6090 
     Gene universe size: 8939 
     Annotation package: org.Hs.eg 
 ```
 
-  3. Store and visualize the results.
+3. Store and visualize the results.
 
 
 ```r
@@ -2033,19 +2032,19 @@ We can find out what methods are available to explore the results in detail. The
 
 ```
       GOBPID       Pvalue OddsRatio   ExpCount Count Size
-1 GO:0010762 0.0005223901       Inf   7.272961    13   13
-2 GO:0016486 0.0012428156 11.844164   8.951337    15   16
-3 GO:0032092 0.0017736149  3.275457  20.140508    29   36
-4 GO:0042493 0.0018264699  1.502773 130.913301   153  234
-5 GO:0060119 0.0025547160  5.002342  12.308088    19   22
-6 GO:0016331 0.0027799845  1.919619  49.791811    63   89
-                                    Term
-1     regulation of fibroblast migration
-2             peptide hormone processing
-3 positive regulation of protein binding
-4                       response to drug
-5    inner ear receptor cell development
-6  morphogenesis of embryonic epithelium
+1 GO:0019054 0.0008703101  5.168565  24.526233    33   36
+2 GO:0010565 0.0027682020  2.007778  68.128426    81  100
+3 GO:0051047 0.0033070683  1.605012 128.708767   146  189
+4 GO:0044003 0.0041594172  2.819444  33.382929    42   49
+5 GO:0033014 0.0066931710  8.442688  12.944401    18   19
+6 GO:0010762 0.0067841237       Inf   8.856695    13   13
+                                                       Term
+1                       modulation by virus of host process
+2           regulation of cellular ketone metabolic process
+3                          positive regulation of secretion
+4 modification by symbiont of host morphology or physiology
+5                         tetrapyrrole biosynthetic process
+6                        regulation of fibroblast migration
 ```
 
 Storing the results in a `data.frame` object enables an automatic processing and filtering of the results.
@@ -2053,24 +2052,32 @@ Storing the results in a `data.frame` object enables an automatic processing and
 
 ```r
 goresults <- summary(hgOverCond)
-head(goresults)
+goresults[1:10,]
 ```
 
 ```
-      GOBPID       Pvalue OddsRatio   ExpCount Count Size
-1 GO:0010762 0.0005223901       Inf   7.272961    13   13
-2 GO:0016486 0.0012428156 11.844164   8.951337    15   16
-3 GO:0032092 0.0017736149  3.275457  20.140508    29   36
-4 GO:0042493 0.0018264699  1.502773 130.913301   153  234
-5 GO:0060119 0.0025547160  5.002342  12.308088    19   22
-6 GO:0016331 0.0027799845  1.919619  49.791811    63   89
-                                    Term
-1     regulation of fibroblast migration
-2             peptide hormone processing
-3 positive regulation of protein binding
-4                       response to drug
-5    inner ear receptor cell development
-6  morphogenesis of embryonic epithelium
+       GOBPID       Pvalue OddsRatio   ExpCount Count Size
+1  GO:0019054 0.0008703101  5.168565  24.526233    33   36
+2  GO:0010565 0.0027682020  2.007778  68.128426    81  100
+3  GO:0051047 0.0033070683  1.605012 128.708767   146  189
+4  GO:0044003 0.0041594172  2.819444  33.382929    42   49
+5  GO:0033014 0.0066931710  8.442688  12.944401    18   19
+6  GO:0010762 0.0067841237       Inf   8.856695    13   13
+7  GO:0048168 0.0072030358  5.161009  16.350822    22   24
+8  GO:0044774 0.0093654411  2.178838  42.239624    51   62
+9  GO:1903543 0.0099641119       Inf   8.175411    12   12
+10 GO:0071156 0.0112560898  2.024630  47.008614    56   69
+                                                        Term
+1                        modulation by virus of host process
+2            regulation of cellular ketone metabolic process
+3                           positive regulation of secretion
+4  modification by symbiont of host morphology or physiology
+5                          tetrapyrrole biosynthetic process
+6                         regulation of fibroblast migration
+7                 regulation of neuronal synaptic plasticity
+8                           mitotic DNA integrity checkpoint
+9                  positive regulation of exosomal secretion
+10                           regulation of cell cycle arrest
 ```
 
 GO terms involving a few genes (e.g., < 5) in their size ($m$) and in their enrichment by DE genes are likely to be less reliable than those that involve many genes.
@@ -2087,20 +2094,20 @@ head(goresults)
 ```
 
 ```
-       GOBPID       Pvalue OddsRatio ExpCount Count Size
-1  GO:0010762 0.0005223901       Inf 7.272961    13   13
-21 GO:0042487 0.0095735123       Inf 4.475668     8    8
-22 GO:0042541 0.0095735123       Inf 4.475668     8    8
-50 GO:0035148 0.0168410972       Inf 3.906958     7    7
-52 GO:0006563 0.0171226695       Inf 3.916210     7    7
-53 GO:0019321 0.0171226695       Inf 3.916210     7    7
-                                                     Term
-1                      regulation of fibroblast migration
-21 regulation of odontogenesis of dentin-containing tooth
-22                        hemoglobin biosynthetic process
-50                                         tube formation
-52                             L-serine metabolic process
-53                              pentose metabolic process
+       GOBPID      Pvalue OddsRatio ExpCount Count Size
+6  GO:0010762 0.006784124       Inf 8.856695    13   13
+9  GO:1903543 0.009964112       Inf 8.175411    12   12
+15 GO:0007213 0.014633919       Inf 7.494127    11   11
+16 GO:0032735 0.014633919       Inf 7.494127    11   11
+17 GO:0046636 0.014633919       Inf 7.494127    11   11
+18 GO:0071380 0.014633919       Inf 7.494127    11   11
+                                                         Term
+6                          regulation of fibroblast migration
+9                   positive regulation of exosomal secretion
+15 G-protein coupled acetylcholine receptor signaling pathway
+16           positive regulation of interleukin-12 production
+17        negative regulation of alpha-beta T cell activation
+18              cellular response to prostaglandin E stimulus
 ```
 
 We can extract the genes that _enrich_ each GO term and paste it to the result as follows:
@@ -2112,58 +2119,6 @@ geneSYMs <- sapply(geneIDs, function(id) select(org.Hs.eg.db, columns="SYMBOL", 
 ```
 
 ```
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
-'select()' returned 1:1 mapping between keys and columns
 'select()' returned 1:1 mapping between keys and columns
 'select()' returned 1:1 mapping between keys and columns
 'select()' returned 1:1 mapping between keys and columns
@@ -2356,21 +2311,20 @@ other attached packages:
  [7] org.Hs.eg.db_3.3.0         sva_3.20.0                
  [9] genefilter_1.54.2          mgcv_1.8-12               
 [11] nlme_3.1-128               geneplotter_1.50.0        
-[13] annotate_1.50.0            XML_3.98-1.4              
+[13] annotate_1.50.0            XML_3.98-1.1              
 [15] AnnotationDbi_1.34.3       lattice_0.20-33           
 [17] edgeR_3.14.0               limma_3.28.5              
 [19] SummarizedExperiment_1.2.2 Biobase_2.32.0            
-[21] GenomicRanges_1.24.0       GenomeInfoDb_1.8.1        
+[21] GenomicRanges_1.24.1       GenomeInfoDb_1.8.1        
 [23] IRanges_2.6.0              S4Vectors_0.10.1          
 [25] BiocGenerics_0.18.0        markdown_0.7.7            
 [27] knitr_1.13                
 
 loaded via a namespace (and not attached):
- [1] formatR_1.4            RColorBrewer_1.1-2     XVector_0.12.0        
+ [1] formatR_1.4            RColorBrewer_1.0-5     XVector_0.12.0        
  [4] tools_3.3.0            zlibbioc_1.18.0        digest_0.6.9          
  [7] RSQLite_1.0.0          evaluate_0.9           DBI_0.4-1             
-[10] stringr_1.0.0          grid_3.3.0             GSEABase_1.34.0       
-[13] RBGL_1.48.1            survival_2.39-4        magrittr_1.5          
-[16] codetools_0.2-14       splines_3.3.0          AnnotationForge_1.14.2
-[19] KernSmooth_2.23-15     stringi_1.1.1         
+[10] stringr_0.6.2          grid_3.3.0             GSEABase_1.34.0       
+[13] RBGL_1.48.1            survival_2.39-4        codetools_0.2-14      
+[16] splines_3.3.0          AnnotationForge_1.14.2 KernSmooth_2.23-15    
 ```

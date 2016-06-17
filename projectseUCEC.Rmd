@@ -615,7 +615,7 @@ consists of the following steps:
 
 Now, we are going to observe the result of different approaches to perform DE analysis.
 
-### 1. Fit directly the linear model to every gene (fdr microarray data?)
+### 1. Fit directly the linear model to every gene
 
 We create the desing matrix using the function `model.matrix()` as follows:
 
@@ -765,7 +765,6 @@ We have the following possible sites inside TSS of our samples:
 - AX: Gynecologic Oncology Group 
 - BG: University of Pittsburgh 
 - BK: Christiana Healthcare 
-- DI: MD Anderson 
 - E6: Roswell Park
 
 So, we adjust the model for the `tissue source site` factor. We need to start over building a new design matrix that includes that factor.
@@ -906,7 +905,7 @@ text(fit4$Amean[top7], fit4$coef[top7, 2], fit4$genes$symbol[top7], cex = 0.5, p
 ### Factorial designs
 
 Factorial designs are experimental designs where the outcome of interest consists of two or more factors.
-Here we consider for illustrative purposes the analysis of the interaction between `type` and `substr(se$bcr_patient_barcode, 6, 7)` factors.
+Here we consider for illustrative purposes the analysis of the interaction between `type` and `tissue source site` factors.
 There are several ways to approach this kind of analysis. One that facilitates the interpretation is building a single factor out of the combination of the factors under study and set the intercept term to zero.
 
 ```{r}
@@ -922,11 +921,11 @@ head(design, n = 3)
 fit6 <- lmFit(v, design)
 ```
 
-Build the contrast matrix that specifies the contrasts of interest between a set of coefficients estimated from a linear regression model. For instance, let's say we want to search for DE genes between 1.5 and 2.5 RNA concentration separately in males and females. Let's try between AX and BG
+Build the contrast matrix that specifies the contrasts of interest between a set of coefficients estimated from a linear regression model. For instance, let's say we want to search for DE genes between BG and BK tissue source sites separately in tumor and normal samples:
 
 ```{r}
 #table(substr(se$bcr_patient_barcode, 6, 7))
-cont.matrix <- makeContrasts(connormal = newfacnormal.BG - newfacnormal.AX, contumor = newfactumor.BG - newfactumor.AX, levels = design)
+cont.matrix <- makeContrasts(connormal = newfacnormal.BG - newfacnormal.BK, contumor = newfactumor.BG - newfactumor.BK, levels = design)
 ```
 
 Estimate coefficients for a given set of contrasts.

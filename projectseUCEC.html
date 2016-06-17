@@ -1332,7 +1332,7 @@ consists of the following steps:</p>
 
 <p>Now, we are going to observe the result of different approaches to perform DE analysis.</p>
 
-<h3>1. Fit directly the linear model to every gene (fdr microarray data?)</h3>
+<h3>1. Fit directly the linear model to every gene</h3>
 
 <p>We create the desing matrix using the function <code>model.matrix()</code> as follows:</p>
 
@@ -1572,7 +1572,6 @@ AJ AX BG BK E6
 <li>AX: Gynecologic Oncology Group </li>
 <li>BG: University of Pittsburgh </li>
 <li>BK: Christiana Healthcare </li>
-<li>DI: MD Anderson </li>
 <li>E6: Roswell Park</li>
 </ul>
 
@@ -1843,7 +1842,7 @@ chr11_JH159137v1_alt chr17_GL000258v2_alt chr19_KI270921v1_alt
 <h3>Factorial designs</h3>
 
 <p>Factorial designs are experimental designs where the outcome of interest consists of two or more factors.
-Here we consider for illustrative purposes the analysis of the interaction between <code>type</code> and <code>substr(se$bcr_patient_barcode, 6, 7)</code> factors.
+Here we consider for illustrative purposes the analysis of the interaction between <code>type</code> and <code>tissue source site</code> factors.
 There are several ways to approach this kind of analysis. One that facilitates the interpretation is building a single factor out of the combination of the factors under study and set the intercept term to zero.</p>
 
 <pre><code class="r">newfac &lt;- factor(paste(se$type, substr(se$bcr_patient_barcode, 6, 7), sep = &quot;.&quot;))
@@ -1881,10 +1880,10 @@ TCGA.AJ.A3NH.01A.11R.A22K.07              0              0              0
 <pre><code class="r">fit6 &lt;- lmFit(v, design)
 </code></pre>
 
-<p>Build the contrast matrix that specifies the contrasts of interest between a set of coefficients estimated from a linear regression model. For instance, let&#39;s say we want to search for DE genes between 1.5 and 2.5 RNA concentration separately in males and females. Let&#39;s try between AX and BG</p>
+<p>Build the contrast matrix that specifies the contrasts of interest between a set of coefficients estimated from a linear regression model. For instance, let&#39;s say we want to search for DE genes between BG and BK tissue source sites separately in tumor and normal samples:</p>
 
 <pre><code class="r">#table(substr(se$bcr_patient_barcode, 6, 7))
-cont.matrix &lt;- makeContrasts(connormal = newfacnormal.BG - newfacnormal.AX, contumor = newfactumor.BG - newfactumor.AX, levels = design)
+cont.matrix &lt;- makeContrasts(connormal = newfacnormal.BG - newfacnormal.BK, contumor = newfactumor.BG - newfactumor.BK, levels = design)
 </code></pre>
 
 <p>Estimate coefficients for a given set of contrasts.</p>

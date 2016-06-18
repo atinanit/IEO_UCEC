@@ -7,6 +7,8 @@
 % {goi} Genetics of Immunity 
 % {gos} Genetics of Sex 
 % {mp} Multiparental Populations
+\usepackage{cite}
+\usepackage{url}
 
 \title{Analysis of a The Cancer Genome Atlas (TCGA) RNA-seq data set on Uterine Corpus Endometrial Carcinoma (UCEC)}
 
@@ -31,7 +33,6 @@ Please see additional guidelines notes on preparing your abstract below.
 \setboolean{displaycopyright}{true}
 
 \begin{document}
-
 \maketitle
 \thispagestyle{firststyle}
 \marginmark
@@ -65,7 +66,7 @@ In addition to the guidelines provided in the example abstract above, your abstr
 
 Endometrial cancer develops in the cells that form the inner lining of the uterus, or the endometrium, and is one of the most common cancers of the female reproductive system. In 2010, approximately 43,000 women in the United States were estimated to have been diagnosed and almost 8,000 to have died of endometrial cancer. This cancer occurs most commonly in women aged 60 years or older. About 69 percent of endometrial cancers are diagnosed at an early stage, and as a result about 83 percent of women will survive five years following the time of diagnosis.
 
-\href{http://cancergenome.nih.gov/cancersselected/endometrial}{The Cancer Genome Atlas} (TCGA) researchers have: 
+The Cancer Genome Atlas (TCGA) \citep{TheCancerGenomeAtlas} researchers have: 
 \begin{itemize}
 \item Identified four subtypes of endometrial cancer: POLE ultramutated, Microsatellite instability hypermutated, Copy number low and Copy number high.
 \item Uncovered shared genomic features between endometrial cancer and serous ovarian cancer, the Basal-like subtype of breast cancer as well as colorectal cancer.
@@ -76,6 +77,7 @@ Endometrial cancer develops in the cells that form the inner lining of the uteru
 \item The rest of the endometrioid tumors are characterized by few copy number alterations, scarce mutations in TP53 and frequent mutations in PTEN and KRAS.
 \end{itemize}
 \end{itemize}
+
 
 %For the introduction, authors should be mindful of the broad readership of the journal. The introduction should set the stage for the importance of the work to a generalist reader and draw the reader in to the specific study. The scope and impact of the work should be clearly stated.
 
@@ -91,11 +93,11 @@ Endometrial cancer develops in the cells that form the inner lining of the uteru
 
 \section*{Materials and Methods}
 
-The \href{http://www.bioconductor.org}{Bioconductor project} is an open-source community effort to develop software packages on top of R for the analysis of molecular data obtained from high-throughput experimental technologies such as microrrays or high-throughput sequencing instruments.
+The Bioconductor project \citep{Gentleman2004} is an open-source community effort to develop software packages on top of R for the analysis of molecular data obtained from high-throughput experimental technologies such as microrrays or high-throughput sequencing instruments.
 
 
 \subsection*{Data Availability}
-The \href{http://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html}{SummarizedExperiment} class was designed to meet requirements from high-throughput sequencing experiments such as storing molecular data from multiple assays and providing more flexibility to define the profiled features.
+The SummarizedExperiment \citep{SummarizedExperiment} class was designed to meet requirements from high-throughput sequencing experiments such as storing molecular data from multiple assays and providing more flexibility to define the profiled features.
 
 The RNA-seq data set on Uterine Corpus Endometrial Carcinoma (UCEC) have 20115 genes and 589 samples. Associated to the row (feature) data, there are 455 sequences (1 circular) from hg38 genome.
 
@@ -106,12 +108,12 @@ The fact that each RNA-seq sample may have been ultimately sequenced at slightly
 \begin{itemize}
 \item Between-sample: adjustments to compare a feature across samples.
 \begin{itemize}
-\item Sample-specific normalization factors: using the TMM algorithm from the R/Bioconductor package \href{http://bioconductor.org/packages/release/bioc/html/edgeR.html}{edgeR}.
-\item Quantile normalization: using the CQN algorithm from the R/Bioconductor package \href{http://bioconductor.org/packages/release/bioc/html/cqn.html}{cqn}.
+\item Sample-specific normalization factors: using the TMM algorithm from the R/Bioconductor package edgeR \citep{Robinson2010b}.
+\item Quantile normalization: using the CQN algorithm from the R/Bioconductor package cqn \citep{Hansen2012b}.
 \end{itemize}
 \item Within-sample: adjustments to compare across features in a sample.
 \begin{itemize}
-\item Scaling: using counts per million reads (CPM) mapped to the genome. This is already implemented in \href{http://bioconductor.org/packages/release/bioc/html/edgeR.html}{edgeR} through the function cpm() which can take as input a DGEList object and can also output the CPM values in logarithmic scale.
+\item Scaling: using counts per million reads (CPM) mapped to the genome. This is already implemented in edgeR \citep{Robinson2010b} through the function cpm() which can take as input a DGEList object and can also output the CPM values in logarithmic scale.
 \end{itemize}
 \end{itemize}
 
@@ -121,7 +123,7 @@ It is imporatnt to work with a subset which is as much representative as the ini
 
 The distribution of expression levels among samples and among genes in terms of logarithmic CPM units are checked. A cutoff of 1 $log_{2}$ CPM unit is made as minimum value of expression to select genes being expressed across samples in order to filter out lowly-expressed genes. The dataset ends up with 11571 genes.
 
-The normalization factors are calculated on the filtered expression data set. The Trimmed Mean of M-values (TMM) method addresses the issue of the different RNA composition of the samples by estimating a scaling factor for each library. This is implemented in the \href{http://bioconductor.org/packages/release/bioc/html/edgeR.html}{edgeR} package through the function calcNormFactors().
+The normalization factors are calculated on the filtered expression data set. The Trimmed Mean of M-values (TMM) method addresses the issue of the different RNA composition of the samples by estimating a scaling factor for each library. This is implemented in the edgeR package \citep{Robinson2010b} through the function calcNormFactors().
 
 The MA-plots of the normalized expression profiles are performed. In general, there are not tumor samples with major expression-level dependent biases, although some of them show variations in low-expressed values. However, there are slightly expression-level dependent biases for some normal samples. The most suspicious cases are TCGA-AJ-A3NH, TCGA-AX-A2HC, TCGA-BK-A13C and TCGA-DI-A2QY, showing sizable dependency between M and A values. 
 
@@ -129,19 +131,19 @@ Tissue Source Site (TSS) is used as surrogate of batch effect indicator variable
 
 In the multidimensional plot (MDS) and the hierchical clustering are shown that TCGA.AX.A2HC.01A and TCGA.DI.A2QY.11A samples are problematic samples as see in the MA-plots. Therefore, both samples and its paired are removed. The dataset ends up with 32 samples.
 
-Moreover, the \href{http://www.bioconductor.org/packages/release/bioc/html/sva.html}{sva} R/Bioconductor package provides a function called ComBat(). A better stratification of the tumor and normal samples are shown when ComBat is applied. ComBat is an empirical Bayes method robust to outliers in small sample sizes which removes batch effect. 
+Moreover, the sva \citep{sva} R/Bioconductor package provides a function called ComBat(). A better stratification of the tumor and normal samples are shown when ComBat is applied. ComBat is an empirical Bayes method robust to outliers in small sample sizes which removes batch effect. 
 
 
 \subsection*{Differential expression}
-We perform a simple examination of expression changes and their associated p-values using the R/Bioconductor package \href{http://www.bioconductor.org/packages/release/bioc/html/sva.html}{sva}. Surrogate variable analysis (sva) is a technique that tries to capture sources of heterogenity in high-throughput profiling data, such as non-biological variability introduced by batch effects. The output of SVA is an estimation of the number of so-called “surrogate variables” and their continuous values, which can be used later on to adjust for these unmeasured and unwanted effects.The SVA algorithm are used to assess the extent of differential expression this time adjusting for these surrogate variables. 
+We perform a simple examination of expression changes and their associated p-values using the R/Bioconductor package sva \citep{sva}. Surrogate variable analysis (sva) is a technique that tries to capture sources of heterogenity in high-throughput profiling data, such as non-biological variability introduced by batch effects. The output of SVA is an estimation of the number of so-called “surrogate variables” and their continuous values, which can be used later on to adjust for these unmeasured and unwanted effects.The SVA algorithm are used to assess the extent of differential expression this time adjusting for these surrogate variables. 
 
-After that, different types of linear regression models are built in order to assess differential expression. The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by y, which is n-dimensional, in terms of something much simpler, the model, which is p -dimensional. Thus, if the model is successful, the structure in the data should be captured in those p dimensions, leaving just random variation in the residuals which lie in an (n-p)-dimensional space. In the context of DE analysis, linear regression models can be written in matrix form, design matrices. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. The \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{limma} R/Bioconductor package has been used to calculate DE analysis.
+After that, different types of linear regression models are built in order to assess differential expression. The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by y, which is n-dimensional, in terms of something much simpler, the model, which is p -dimensional. Thus, if the model is successful, the structure in the data should be captured in those p dimensions, leaving just random variation in the residuals which lie in an (n-p)-dimensional space. In the context of DE analysis, linear regression models can be written in matrix form, design matrices. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. The limma \citep{Ritchie2015} R/Bioconductor package has been used to calculate DE analysis.
 
 
 \subsection*{Functional enrichment}
 Functional enrichment analyses constitute a straightforward way to approach the question of what pathways may be differentially expressed (DE) between normal and tumor genes in our data.
 
-The Gene Ontology (GO) database project provides a controlled vocabulary to describe gene and gene product attributes in any organism. It consists of so-called GO terms, which are pairs of term identifier (GO ID) and description. The \href{http://www.bioconductor.org/packages/release/bioc/html/GOstats.html}{GOstats} R/Bioconductor package performes a functional enrichment analysis on the entire collection of GO gene sets. A parameter object with information specifiying the gene universe, the set of DE genes and the annotation packages \href{https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db} to use are built. The functional enrichment analysis is turned by a conditional test which takes into account the hierarchical structure of GO terms.
+The Gene Ontology (GO) database project provides a controlled vocabulary to describe gene and gene product attributes in any organism. It consists of so-called GO terms, which are pairs of term identifier (GO ID) and description. The GOstats \citep{Falcon2007} R/Bioconductor package performes a functional enrichment analysis on the entire collection of GO gene sets. A parameter object with information specifiying the gene universe, the set of DE genes and the annotation packages org.Hs.eg.db \citep{org.Hs.eg.db} to use are built. The functional enrichment analysis is turned by a conditional test which takes into account the hierarchical structure of GO terms.
 
 
 %Manuscripts submitted to \textit{GENETICS} should contain a clear description of the experimental design in sufficient detail so that the experimental analysis could be repeated by another scientist. If the level of detail necessary to explain the protocol goes beyond two paragraphs, give a short description in the main body of the paper and prepare a detailed description for supporting information.  For example, details would include indicating how many individuals were used, and if applicable how individuals or groups were combined for analysis. If working with mutants indicate how many independent mutants were isolated. If working with populations indicate how samples were collected and whether they were random with respect to the target population.
@@ -160,7 +162,64 @@ The Gene Ontology (GO) database project provides a controlled vocabulary to desc
 
 \section*{Results and Discussion}
 
-The results and discussion should not be repetitive. The results section should give a factual presentation of the data and all tables and figures should be referenced; the discussion should not summarize the results but provide an interpretation of the results, and should clearly delineate between the findings of the particular study and the possible impact of those findings in a larger context. Authors are encouraged to cite recent work relevant to their interpretations. Present and discuss results only once, not in both the Results and Discussion sections. It is sometimes acceptable to combine results and discussion. The text should be as succinct as possible. Heed Strunk and White's dictum: "Omit needless words!"
+\subsection{Functional Enrichment: The Gene Ontology analysis}
+
+In the \textit{table X} we can see the list of the 10 most significantly differentially expressed pathways in uterine tumour tissue, taking the ordered goresults obtained from the final set of DEgenes. 
+
+\begin{center}
+ \begin{tabular}{|| c c c c c||} 
+ \hline
+ \textbf{GOBPID} & \textbf{Pvalue} & \textbf{OddsRatio} & \textbf{Excount} & \textbf{Count} \\ [0.5ex] 
+ \hline\hline
+ GO:0010762 & 0.0068 & Inf & 8.8567 & 13 \\
+ \multicolumn{5}{||c||}{regulation of fibroblast migration} \\ 
+ \hline
+ GO:1903543 & 0.0100 & Inf & 8.1754 & 12 \\
+ \multicolumn{5}{||c||}{positive regulation of exosomal secretion} \\ 
+ \hline
+ GO:0007213 & 0.0146 & Inf & 7.4941 & 11 \\
+ \multicolumn{5}{||c||}{G-protein coupled acetylcholine receptor signaling pathway} \\ 
+ \hline
+ GO:0032735 & 0.0146 & Inf & 7.4941 & 11 \\
+ \multicolumn{5}{||c||}{positive regulation of interleukin-12 production} \\ 
+  \hline
+ GO:0046636 & 0.0146 & Inf & 7.4941 & 11 \\
+ \multicolumn{5}{||c||}{negative regulation of alpha-beta T cell activation} \\ 
+  \hline
+ GO:0071380 & 0.0146 & Inf & 7.4941 & 11 \\
+ \multicolumn{5}{||c||}{cellular response to prostaglandin E stimulus} \\ 
+  \hline
+ GO:0010842 & 0.0215 & Inf & 6.8128 & 10 \\
+ \multicolumn{5}{||c||}{retina layer formation} \\ 
+  \hline
+ GO:0036092 & 0.0215 & Inf & 6.8128 & 10 \\
+ \multicolumn{5}{||c||}{phosphatidylinositol-3-phosphate biosynthetic process} \\ 
+  \hline
+ GO:0045986 & 0.0215 & Inf & 6.8128 & 10 \\
+ \multicolumn{5}{||c||}{negative regulation of smooth muscle contraction} \\ 
+  \hline
+ GO:0007063 &  0.0316 & Inf & 6.1316 & 9 \\
+ \multicolumn{5}{||c||}{regulation of sister chromatid cohesion} \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+Taking those 10 top GO terms, our analysis identified nine functional groups which could be, directly or indirectly, involved in endometrial cancer. One of them seems to be a functional group specific from our cancer type, while the others don't. Another one, related to the retina formation, does not seem to be biochemically related to the UCEC. 
+
+Between the eight groups that can be related to cancer we find:
+\begin{itemize}
+  \item \textbf{Regulation of fibroblast migration}, which is directly related with tissue damage, and therefore, with tumors. Fibroblasts are considered to have a key role in the malignant progression of cancer and represent an important target in endometrial cancer research, as it has been demonstrated in some current articles \citep{Subramaniam2013, Teng2016, Turner2010}.
+  \item \textbf{Regulation of sister chromatid cohesion}, as it has been proved that aberrant sister chromatid cohesion causes instability and contributes to the development of cancer \citep{LeGallo2012}. Several studies have targeted candidate chromosome instability genes in order to treat endometrial cancer \citep{Price2013}.
+  \item \textbf{Positive regulation of exosomal secretion}, which is fundamental due to the increasing evidence that tumor cells release excessive amount of exosomes \citep{Zhang2015}.
+  \item \textbf{Regulation of interleukin-12 production} and \textbf{alpha-beta T cell activation} are clearly part of the development of the immune response against the tumor \citep{Colombo2002, Martin-Orozco2009}, and therefore, they are differentially expressed in comparison with normal samples. 
+  \item \textbf{G-protein coupled receptor pathway} or \textbf{phosphatidyli-nositol-3-phosphate biosyntesis} are two cases belonging to signaling pathways, also affected by cancer development \citep{Li2005, Wang2006}.
+\end{itemize}
+
+There is one group identified between the top ten differentially expressed functional groups which has been directly related with endometrial cancer: \textbf{negative regulation of smooth muscle contraction}. This is because fibroids, which are benign tumours of smooth muscle, are believed to alter muscular contraction of uterus \citep{GeorgetownUniversityHospital}. However, there is not much investigation in this direction.
+
+It is also important to remark that there are two differentially expressed genes known to have important roles in endometrial cancer which are part of two of the top ten differentially expressed functional groups. The first is PIK3C2A, which is part of the Phosphatidylinositol-3-phosphate biosynthetic process, and has an established role in the pathogenesis of serous endometrial cancer \citep{LeGallo2012}. The second is CTNNB1, in regulation of sister chromatid cohesion, a gene with an unusually high frequency of mutations in endometroid tumors (52\%) \citep{Getz2013}. \\
+
+The differential expression and functional enrichment analysis have provided an interesting perspective of the endometrial cancer, remarking the most important genes and pathways which suffer changes during the disease, and raising hypotheses about how they could affect to its advance. 
 
 \section*{Additional guidelines}
 
@@ -168,7 +227,7 @@ The results and discussion should not be repetitive. The results section should 
 
 \subsection*{Units} Use abbreviations of the customary units of measurement only when they are preceded by a number: "3 min" but "several minutes". Write "percent" as one word, except when used with a number: "several percent" but "75\%." To indicate temperature in centigrade, use ° (for example, 37°); include a letter after the degree symbol only when some other scale is intended (for example, 45°K).
 
-\subsection*{Nomenclature and Italicization} Italicize names of organisms even when  when the species is not indicated.  Italicize the first three letters of the names of restriction enzyme cleavage sites, as in HindIII. Write the names of strains in roman except when incorporating specific genotypic designations. Italicize genotype names and symbols, including all components of alleles, but not when the name of a gene is the same as the name of an enzyme. Do not use "+" to indicate wild type. Carefully distinguish between genotype (italicized) and phenotype (not italicized) in both the writing and the symbolism.
+\subsection*{Nomenclature and Italicization} Italicize names of organisms even when  when the species is not indicated. Italicize the first three letters of the names of restriction enzyme cleavage sites, as in HindIII. Write the names of strains in roman except when incorporating specific genotypic designations. Italicize genotype names and symbols, including all components of alleles, but not when the name of a gene is the same as the name of an enzyme. Do not use "+" to indicate wild type. Carefully distinguish between genotype (italicized) and phenotype (not italicized) in both the writing and the symbolism.
 
 \section*{In-text Citations}
 
@@ -255,6 +314,6 @@ S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
 \end{equation}
 denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
 
-\bibliography{example-bibliography}
+\bibliography{IEO_UCEC}
 
 \end{document}

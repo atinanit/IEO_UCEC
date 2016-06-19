@@ -23,7 +23,7 @@
 \correspondingauthor{Joaquim Aguirre, Gerard Funosas, Cristina Prat}
 
 \begin{abstract}
-The Cancer Genome Atlas (TCGA) focuses on finding the genetic bases of cancer in human (\textit{Homo sapiens sapiens}) different tissues. The RNA sequencing tool provides us information of the transcriptome of a biological sample of a given condition. Comparing tumorous and healthy samples the differences in gene expression between those conditions can be uncovered. Uterine Corpus Endometrial Carcinoma (UCEC) is one of the most common cancers within women. In this study an uterine RNA-seq dataset from the TCGA is analyses with bioinformatic tools. A paired sample sub-setting and a low-expressed genes filtering left a quality-filtered dataset of 11571 genes for 32 paired samples. After fitting the data in a regression linear model, taking into account both a surrogate variable analysis and one covariate effect, the number of differentially expressed genes summed 7845 (68\%). The corresponding GO terms for each of those genes was assigned, and the most represented biological processes in the whole dataset were obtained and ordered by significance.  8 out of the 10 functional groups most differentially expressed in tumorous samples were related to cancer biochemical processes, as tissue growth, immune response or cell signaling pathways. Another one was directly related to uterine muscle contraction, altered by cancer tumors. Those results show that, even if the genetic bases of cancer are complex, there are both universal patterns in multiple kinds of cancer and specific ones for specific tumor types that can be further assessed to find new ways to control the tumor development.
+The Cancer Genome Atlas (TCGA) focuses on finding the genetic bases of cancer in human (\textit{Homo sapiens sapiens}) different tissues. The RNA sequencing tool provides information of the transcriptome of a biological sample in a given condition. Comparing tumorous and healthy samples, the differences in gene expression between those conditions can be uncovered. Uterine Corpus Endometrial Carcinoma (UCEC) is one of the most common cancers within women. In this study, a uterine RNA-seq dataset from TCGA has been analysed using bioinformatic tools. A paired sample sub-setting and a low-expressed genes filtering left a quality-filtered dataset of 11571 genes for 32 paired samples. After fitting the data in a regression linear model, taking into account both a surrogate variable analysis and one known covariate effect, the number of differentially expressed genes summed 7845 (68\%). The corresponding GO terms for each of those genes was assigned, and the most represented biological processes in the whole dataset were obtained and ordered by significance.  8 out of the 10 functional groups most differentially expressed in tumorous samples were related to cancer biochemical processes, such as tissue growth, immune response or cell signaling pathways. Another one was directly related to uterine muscle contraction, altered by cancer. Those results show that, even if the genetic bases of cancer are complex, there are both universal patterns in multiple kinds of cancer and specific ones for specific tumor types that can be further assessed to find new ways of controlling tumor development.
 \end{abstract}
 
 \setboolean{displaycopyright}{true}
@@ -165,7 +165,14 @@ The Gene Ontology (GO) database project provides a controlled vocabulary to desc
 
 \subsection{Differential expression analysis}
 
-From the differential expression analysis, four different models were created in order to assess differential expression, all of them using a False Discovery Rate of 5\%. The first was the simplest one, as \textbf{the linear model was fitted directly in the design matrix to every gene}. 6457 genes were differentially expressed using this approach. The second model consisted in \textbf{fitting the model adjusting for the mean-variance relationship}. This is done in order to correct the variability of RNA-seq counts from sample to sample for the same gene and different depths of different samples. The results obtained were 6441 differentially expressed genes. The third model was \textbf{adjusting the model for known covariates}, known sources of unwanted variation. The source of variation used was the \textit{Tissue Source Site (TSS)}, obtained from the patient barcode. The results were 6491 differentially expressed genes. The fourth analysis was to complement the previous model of known covariates with a \textbf{surrogate variable analysis (SVA)}. There were 9 surrogate variables found, which were added to the design matrix of the third model. From this analysis, 7845 differentially expressed genes were found. In all the models created the chromosome with higher number of differentially expressed genes was the chromosome 1.
+From the differential expression analysis, four different models were created in order to assess differential expression, all of them using a False Discovery Rate of 5\%. The first was the simplest one, as \textbf{the linear model was fitted directly in the design matrix to every gene}. 6457 genes were differentially expressed using this approach. The second model consisted in \textbf{fitting the model adjusting for the mean-variance relationship}. This is done in order to correct the variability of RNA-seq counts from sample to sample for the same gene and different depths of different samples. The results obtained were 6441 differentially expressed genes. The third model was \textbf{adjusting the model for known covariates}, known sources of unwanted variation. The source of variation used was the \textit{Tissue Source Site (TSS)}, obtained from the patient barcode. The results were 6491 differentially expressed genes. The fourth analysis was to complement the previous model of known covariates with a \textbf{surrogate variable analysis (SVA)}. There were 9 surrogate variables found, which were added to the design matrix of the third model. The MA-plot corresponding to the fourth model is represented in figure \ref{fig:MAplot}.  From this analysis, 7845 differentially expressed genes were found. In all the models created the chromosome with higher number of differentially expressed genes was the chromosome 1.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{maPlot-1}
+\caption{MA-plot for the model 4, adjusting the known covariate TSS and unkwnown covariates using SVA}
+\label{fig:MAplot}
+\end{figure}
 
 From the last model, a factorial design was performed in order to analyse the interaction between \textit{type} (tumor or normal) and \textit{TSS}, concretely with BG and BK. It was not successful, as there were not genes which were clearly differentially expressed in only one 	of them. For future analyses, it could be interesting to analyse the interaction between other possible sources of unwanted variation such as \textit{histological diagnosis}, as it has been seen in several studies that there are genes clearly differentially expressed between serous and endometroid tumors \citep{Getz2013}.
 
@@ -176,8 +183,9 @@ The more complete model is the last one, as it includes to an adjusted model for
 In the \textit{table X} we can see the list of the 10 most significantly differentially expressed pathways in uterine tumour tissue, taking the ordered goresults obtained from the final set of DEgenes. 
 
 \begin{table}
-\begin{center}
+\centering
 \caption{Ten most significant gene ontologies found in the Functional Enrichment analysis}
+\begin{tableminipage}{\textwidth}
  \begin{tabular}{|| c c c c c||} 
  \hline
  \textbf{GOBPID} & \textbf{Pvalue} & \textbf{OddsRatio} & \textbf{Excount} & \textbf{Count} \\ [0.5ex] 
@@ -213,7 +221,8 @@ In the \textit{table X} we can see the list of the 10 most significantly differe
  \multicolumn{5}{||c||}{regulation of sister chromatid cohesion} \\ 
  \hline
 \end{tabular}
-\end{center}
+  \label{tab:shape-functions}
+\end{tableminipage}
 \end{table}
 
 Taking those 10 top GO terms, our analysis identified nine functional groups which could be, directly or indirectly, involved in endometrial cancer. One of them seems to be a functional group specific from our cancer type, while the others don't. Another one, related to the retina formation, does not seem to be biochemically related to the UCEC. 

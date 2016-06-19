@@ -953,14 +953,14 @@ ttconnormal <- topTable(fit6, coef = "connormal", n = Inf)
 ttcontumor <- topTable(fit6, coef = "contumor", n = Inf)
 ```
 
-Explore graphically the overlap of DE genes between contrasts of interest (Figure S19):
+Now, it is possible to explore graphically the overlap of DE genes between contrasts of interest (Figure S19):
 
 ```{r vennDiagram, echo=FALSE, fig.height=4, fig.width=5, out.height="300px", fig.cap="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest"}
 res <- decideTests(fit6, p.value = 0.1)
 vennDiagram(res)
 ```
 
-
+As it can be seen, there is not a clear interaction between TSS and type factors. Probably, there is not much unwanted variability in the TSS factor. It could be interest for future analyses to use `hystologic_analysis`, as there are several studies reporting differentially expressed genes in function of the type of histologic diagnosis.
 
 ## Functional Enrichment: The Gene Ontology analysis
 

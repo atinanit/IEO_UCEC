@@ -1,0 +1,103 @@
+\begin{thebibliography}{1}
+
+\bibitem[{Getz {\em et~al.\/}}(2013){Getz, Gabriel, Cibulskis, Lander,
+  Sivachenko, Sougnez, Lawrence, Kandoth, Dooling, Fulton, Fulton,
+  Kalicki-Veizer, McLellan, O'Laughlin, Schmidt, Wilson, Ye, Ding, Mardis,
+  Ally, Balasundaram, Birol, Butterfield, Carlsen, Carter, Chu, Chuah, Chun,
+  Dhalla, Guin, Hirst, Holt, Jones, Lee, Li, Marra, Mayo, Moore, Mungall,
+  Plettner, Schein, Sipahimalani, Tam, Varhol, {Gordon Robertson}, Cherniack,
+  Pashtan, Saksena, Onofrio, Schumacher, Tabak, Carter, Hernandez, Gentry,
+  Salvesen, Ardlie, Getz, Winckler, Beroukhim, Gabriel, Meyerson, Hadjipanayis,
+  Lee, Mahadeshwar, Park, Protopopov, Ren, Seth, Song, Tang, Xi, Yang, Zeng,
+  Kucherlapati, Chin, Zhang, {Todd Auman}, Balu, Bodenheimer, Buda, {Neil
+  Hayes}, Hoyle, Jefferys, Jones, Meng, Mieczkowski, Mose, Parker, Perou,
+  Roach, Shi, Simons, Soloway, Tan, Topal, Waring, Wu, Hoadley, Baylin,
+  Bootwalla, Lai, {Triche Jr}, {Van Den Berg}, Weisenberger, Laird, Shen, Chin,
+  Zhang, Getz, Cho, DiCara, Frazer, Heiman, Jing, Lin, Mallard, Stojanov, Voet,
+  Zhang, Zou, Noble, Lawrence, Reynolds, Shmulevich, {Arman Aksoy}, Antipin,
+  Ciriello, Dresdner, Gao, Gross, Jacobsen, Ladanyi, Reva, Sander, Sinha, {Onur
+  Sumer}, Taylor, Cerami, Weinhold, Schultz, Shen, Benz, Goldstein, Haussler,
+  Ng, Szeto, Stuart, Benz, Yau, Zhang, Annala, Broom, Casasent, Ju, Liang, Liu,
+  Lu, Unruh, Wakefield, Weinstein, Zhang, Liu, Broaddus, Akbani, Mills, Adams,
+  Barr, Black, Bowen, Deardurff, Frick, Gastier-Foster, Grossman, Harper,
+  Hart-Kothari, Helsel, Hobensack, Kuck, Kneile, Leraas, Lichtenberg,
+  McAllister, Pyatt, Ramirez, Tabler, Vanhoose, White, Wise, Zmuda, Barnabas,
+  Berry-Green, Blanc, Boice, Button, Farkas, Green, MacKenzie, Nicholson,
+  Kalloger, {Blake Gilks}, Karlan, Lester, Orsulic, Borowsky, Cadungog,
+  Czerwinski, Huelsenbeck-Dill, Iacocca, Petrelli, Rabeno, Witkin,
+  Nemirovich-Danchenko, Potapova, Rotin, Berchuck, Birrer, DiSaia, Monovich,
+  Curley, Gardner, Mallery, Penny, Dowdy, Winterhoff, Dao, Gostout, Meuter,
+  Teoman, Dao, Olvera, Bogomolniy, Garg, Soslow, Levine, Abramov, Bartlett,
+  Kodeeswaran, Parfitt, Moiseenko, Clarke, Goodman, Carney, Matsuno, Fisher,
+  Huang, {Kimryn Rathmell}, Thorne, {Van Le}, Dhir, Edwards, Elishaev, Zorn,
+  Broaddus, Goodfellow, Mutch, Schultz, Liu, Akbani, Cherniack, Cerami,
+  Weinhold, Shen, Hoadley, Kahn, Bell, Pollock, Wang, A.Wheeler, Shinbrot,
+  Karlan, Berchuck, Dowdy, Winterhoff, Goodman, {Gordon Robertson}, Beroukhim,
+  Pashtan, Salvesen, Laird, Noble, Stuart, Ding, Kandoth, {Blake Gilks},
+  Soslow, Goodfellow, Mutch, Broaddus, Zhang, Mills, Kucherlapati, Mardis,
+  Levine, Ayala, Chu, Jensen, Kothiyal, Pihl, Pontius, Pot, Snyder, Srinivasan,
+  Kahn, {Mills Shaw}, Sheth, Davidsen, {Eley Martin L. Ferguson}, Demchok,
+  Yang, Guyer, Ozenberger, Sofia, Kandoth, Schultz, Cherniack, Akbani, Liu,
+  Shen, {Gordon Robertson}, Pashtan, Shen, Benz, Yau, Laird, Ding, Zhang,
+  Mills, Kucherlapati, Mardis, {\rm and} Levine}]{Getz2013}
+{Getz, G., S.~B. Gabriel, K.~Cibulskis, E.~Lander, A.~Sivachenko, C.~Sougnez,
+  M.~Lawrence, C.~Kandoth, D.~Dooling, R.~Fulton, L.~Fulton, J.~Kalicki-Veizer,
+  M.~D. McLellan, M.~O'Laughlin, H.~Schmidt, R.~K. Wilson, K.~Ye, L.~Ding,
+  E.~R. Mardis, A.~Ally, M.~Balasundaram, I.~Birol, Y.~S.~N. Butterfield,
+  R.~Carlsen, C.~Carter, A.~Chu, E.~Chuah, H.-J.~E. Chun, N.~Dhalla, R.~Guin,
+  C.~Hirst, R.~A. Holt, S.~J.~M. Jones, D.~Lee, H.~I. Li, M.~A. Marra, M.~Mayo,
+  R.~A. Moore, A.~J. Mungall, P.~Plettner, J.~E. Schein, P.~Sipahimalani,
+  A.~Tam, R.~J. Varhol, A.~{Gordon Robertson}, A.~D. Cherniack, I.~Pashtan,
+  G.~Saksena, R.~C. Onofrio, S.~E. Schumacher, B.~Tabak, S.~L. Carter,
+  B.~Hernandez, J.~Gentry, H.~B. Salvesen, K.~Ardlie, G.~Getz, W.~Winckler,
+  R.~Beroukhim, S.~B. Gabriel, M.~Meyerson, A.~Hadjipanayis, S.~Lee, H.~S.
+  Mahadeshwar, P.~Park, A.~Protopopov, X.~Ren, S.~Seth, X.~Song, J.~Tang,
+  R.~Xi, L.~Yang, D.~Zeng, R.~Kucherlapati, L.~Chin, J.~Zhang, J.~{Todd Auman},
+  S.~Balu, T.~Bodenheimer, E.~Buda, D.~{Neil Hayes}, A.~P. Hoyle, S.~R.
+  Jefferys, C.~D. Jones, S.~Meng, P.~A. Mieczkowski, L.~E. Mose, J.~S. Parker,
+  C.~M. Perou, J.~Roach, Y.~Shi, J.~V. Simons, M.~G. Soloway, D.~Tan, M.~D.
+  Topal, S.~Waring, J.~Wu, K.~A. Hoadley, S.~B. Baylin, M.~S. Bootwalla, P.~H.
+  Lai, T.~J. {Triche Jr}, D.~J. {Van Den Berg}, D.~J. Weisenberger, P.~W.
+  Laird, H.~Shen, L.~Chin, J.~Zhang, G.~Getz, J.~Cho, D.~DiCara, S.~Frazer,
+  D.~Heiman, R.~Jing, P.~Lin, W.~Mallard, P.~Stojanov, D.~Voet, H.~Zhang,
+  L.~Zou, M.~Noble, M.~Lawrence, S.~M. Reynolds, I.~Shmulevich, B.~{Arman
+  Aksoy}, Y.~Antipin, G.~Ciriello, G.~Dresdner, J.~Gao, B.~Gross, A.~Jacobsen,
+  M.~Ladanyi, B.~Reva, C.~Sander, R.~Sinha, S.~{Onur Sumer}, B.~S. Taylor,
+  E.~Cerami, N.~Weinhold, N.~Schultz, R.~Shen, S.~Benz, T.~Goldstein,
+  D.~Haussler, S.~Ng, C.~Szeto, J.~Stuart, C.~C. Benz, C.~Yau, W.~Zhang,
+  M.~Annala, B.~M. Broom, T.~D. Casasent, Z.~Ju, H.~Liang, G.~Liu, Y.~Lu, A.~K.
+  Unruh, C.~Wakefield, J.~N. Weinstein, N.~Zhang, Y.~Liu, R.~Broaddus,
+  R.~Akbani, G.~B. Mills, C.~Adams, T.~Barr, A.~D. Black, J.~Bowen,
+  J.~Deardurff, J.~Frick, J.~M. Gastier-Foster, T.~Grossman, H.~A. Harper,
+  M.~Hart-Kothari, C.~Helsel, A.~Hobensack, H.~Kuck, K.~Kneile, K.~M. Leraas,
+  T.~M. Lichtenberg, C.~McAllister, R.~E. Pyatt, N.~C. Ramirez, T.~R. Tabler,
+  N.~Vanhoose, P.~White, L.~Wise, E.~Zmuda, N.~Barnabas, C.~Berry-Green,
+  V.~Blanc, L.~Boice, M.~Button, A.~Farkas, A.~Green, J.~MacKenzie,
+  D.~Nicholson, S.~E. Kalloger, C.~{Blake Gilks}, B.~Y. Karlan, J.~Lester,
+  S.~Orsulic, M.~Borowsky, M.~Cadungog, C.~Czerwinski, L.~Huelsenbeck-Dill,
+  M.~Iacocca, N.~Petrelli, B.~Rabeno, G.~Witkin, E.~Nemirovich-Danchenko,
+  O.~Potapova, D.~Rotin, A.~Berchuck, M.~Birrer, P.~DiSaia, L.~Monovich,
+  E.~Curley, J.~Gardner, D.~Mallery, R.~Penny, S.~C. Dowdy, B.~Winterhoff,
+  L.~Dao, B.~Gostout, A.~Meuter, A.~Teoman, F.~Dao, N.~Olvera, F.~Bogomolniy,
+  K.~Garg, R.~A. Soslow, D.~A. Levine, M.~Abramov, J.~M.~S. Bartlett,
+  S.~Kodeeswaran, J.~Parfitt, F.~Moiseenko, B.~A. Clarke, M.~T. Goodman, M.~E.
+  Carney, R.~K. Matsuno, J.~Fisher, M.~Huang, W.~{Kimryn Rathmell}, L.~Thorne,
+  L.~{Van Le}, R.~Dhir, R.~Edwards, E.~Elishaev, K.~Zorn, R.~Broaddus, P.~J.
+  Goodfellow, D.~Mutch, N.~Schultz, Y.~Liu, R.~Akbani, A.~D. Cherniack,
+  E.~Cerami, N.~Weinhold, H.~Shen, K.~A. Hoadley, A.~B. Kahn, D.~W. Bell, P.~M.
+  Pollock, C.~Wang, D.~A.Wheeler, E.~Shinbrot, B.~Y. Karlan, A.~Berchuck, S.~C.
+  Dowdy, B.~Winterhoff, M.~T. Goodman, A.~{Gordon Robertson}, R.~Beroukhim,
+  I.~Pashtan, H.~B. Salvesen, P.~W. Laird, M.~Noble, J.~Stuart, L.~Ding,
+  C.~Kandoth, C.~{Blake Gilks}, R.~A. Soslow, P.~J. Goodfellow, D.~Mutch,
+  R.~Broaddus, W.~Zhang, G.~B. Mills, R.~Kucherlapati, E.~R. Mardis, D.~A.
+  Levine, B.~Ayala, A.~L. Chu, M.~A. Jensen, P.~Kothiyal, T.~D. Pihl,
+  J.~Pontius, D.~A. Pot, E.~E. Snyder, D.~Srinivasan, A.~B. Kahn, K.~R. {Mills
+  Shaw}, M.~Sheth, T.~Davidsen, G.~{Eley Martin L. Ferguson}, J.~A. Demchok,
+  L.~Yang, M.~S. Guyer, B.~A. Ozenberger, H.~J. Sofia, C.~Kandoth, N.~Schultz,
+  A.~D. Cherniack, R.~Akbani, Y.~Liu, H.~Shen, A.~{Gordon Robertson},
+  I.~Pashtan, R.~Shen, C.~C. Benz, C.~Yau, P.~W. Laird, L.~Ding, W.~Zhang,
+  G.~B. Mills, R.~Kucherlapati, E.~R. Mardis, {\rm and} D.~A. Levine}, 2013
+  {Integrated genomic characterization of endometrial carcinoma}. Nature {\bf
+  497}: 67--73.
+
+\end{thebibliography}

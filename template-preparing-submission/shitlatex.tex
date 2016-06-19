@@ -12,15 +12,15 @@
 
 \author[$\ast$]{Aguirre, J.}
 \author[$\ast$]{Funosas, G.}
-\author[$\ast$]{Prat, C.}
+\author[$\ast$,1]{Prat, C.}
 
 \affil[$\ast$]{University Pompeu Fabra}
 
 \keywords{UCEC; TCGA; RNA-seq; Differential Expression; Functional Enrichment;}
 
-\runningtitle{GENETICS Journal Template on Overleaf} % For use in the footer 
+\runningtitle{GENETICS | Investigation} % For use in the footer 
 
-\correspondingauthor{Joaquim Aguirre, Gerard Funosas, (1) Cristina Prat}
+\correspondingauthor{Joaquim Aguirre, Gerard Funosas, Cristina Prat}
 
 \begin{abstract}
 The Cancer Genome Atlas (TCGA) focuses on finding the genetic bases of cancer in human (\textit{Homo sapiens sapiens}) different tissues. The RNA sequencing tool provides us information of the transcriptome of a biological sample of a given condition. Comparing tumorous and healthy samples the differences in gene expression between those conditions can be uncovered. Uterine Corpus Endometrial Carcinoma (UCEC) is one of the most common cancers within women. In this study an uterine RNA-seq dataset from the TCGA is analyses with bioinformatic tools. A paired sample sub-setting and a low-expressed genes filtering left a quality-filtered dataset of 11571 genes for 32 paired samples. After fitting the data in a regression linear model, taking into account both a surrogate variable analysis and one covariate effect, the number of differentially expressed genes summed 7845 (68\%). The corresponding GO terms for each of those genes was assigned, and the most represented biological processes in the whole dataset were obtained and ordered by significance.  8 out of the 10 functional groups most differentially expressed in tumorous samples were related to cancer biochemical processes, as tissue growth, immune response or cell signaling pathways. Another one was directly related to uterine muscle contraction, altered by cancer tumors. Those results show that, even if the genetic bases of cancer are complex, there are both universal patterns in multiple kinds of cancer and specific ones for specific tumor types that can be further assessed to find new ways to control the tumor development.
@@ -37,7 +37,6 @@ The Cancer Genome Atlas (TCGA) focuses on finding the genetic bases of cancer in
 \correspondingauthoraffiliation{cristina.prat.ferrer@gmail.com}
 \vspace{-11pt}%
 
-\lettrine[lines=2]{\color{color2}T}{}his \textit{Genetics} journal template is provided to help you write your work in the correct journal format. Instructions for use are provided below. 
 
 \section*{Introduction}
 
@@ -115,13 +114,12 @@ Moreover, the \href{http://www.bioconductor.org/packages/release/bioc/html/sva.h
 
 
 \subsection*{Differential expression}
+
 We perform a simple examination of expression changes and their associated p-values using the R/Bioconductor package \href{http://www.bioconductor.org/packages/release/bioc/html/sva.html}{sva}. Surrogate variable analysis (sva) is a technique that tries to capture sources of heterogeneity in high-throughput profiling data, such as non-biological variability introduced by batch effects. The output of SVA is an estimation of the number of so-called “surrogate variables” and their continuous values, which can be used later on to adjust for these unmeasured and unwanted effects.The SVA algorithm are used to assess the extent of differential expression this time adjusting for these surrogate variables. 
 
-After that, different types of linear regression models are built in order to assess differential expression. The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by y, which is n-dimensional, in terms of something much simpler, the model, which is p -dimensional. Thus, if the model is successful, the structure in the data should be captured in those p dimensions, leaving just random variation in the residuals which lie in an (n-p)-dimensional space. In the context of DE analysis, linear regression models can be written in matrix form, design matrices. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. The \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{limma} R/Bioconductor package has been used to calculate DE analysis. \\
-
 \begin{table*}[htbp]
-\centering
-\caption{\bf Linear regression models}
+\begin{center}
+\caption{\bf Linear regression models created and their corresponding number of differentially expressed genes found}
 \begin{tableminipage}{\textwidth}
 \begin{tabularx}{\textwidth}{XXXX}
 \hline
@@ -135,10 +133,15 @@ Model & Approach used & DE genes \\ [0.5ex]
 \end{tabularx}
   \label{tab:shape-functions}
 \end{tableminipage}
+\end{center}
 \end{table*}
 
-If the outcome of interest is not confounded with other sources of variation, the more variables there are in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it shows. So, the model that is going to be used for the following analysis is the fourth model, adjusting for known covariates plus the surrogate variables analysis. \\
+After that, different types of linear regression models are built in order to assess differential expression. The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by y, which is n-dimensional, in terms of something much simpler, the model, which is p -dimensional. Thus, if the model is successful, the structure in the data should be captured in those p dimensions, leaving just random variation in the residuals which lie in an (n-p)-dimensional space. In the context of DE analysis, linear regression models can be written in matrix form, design matrices. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. The \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{limma} R/Bioconductor package has been used to calculate DE analysis.
+
+If the outcome of interest is not confounded with other sources of variation, the more variables there are in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it shows. So, the model that is going to be used for the following analysis is the fourth model, adjusting for known covariates plus the surrogate variables analysis.
+
 \subsection*{Functional enrichment}
+
 Functional enrichment analyses constitute a straightforward way to approach the question of what pathways may be differentially expressed (DE) between normal and tumor genes in our data.
 
 The Gene Ontology (GO) database project provides a controlled vocabulary to describe gene and gene product attributes in any organism. It consists of so-called GO terms, which are pairs of term identifier (GO ID) and description. The \href{http://www.bioconductor.org/packages/release/bioc/html/GOstats.html}{GOstats} R/Bioconductor package performes a functional enrichment analysis on the entire collection of GO gene sets. A parameter object with information specifiying the gene universe, the set of DE genes and the annotation packages \href{https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html}{org.Hs.eg.db} to use are built. The functional enrichment analysis is turned by a conditional test which takes into account the hierarchical structure of GO terms.

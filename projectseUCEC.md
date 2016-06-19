@@ -281,90 +281,7 @@ The project starts importing the raw table of counts. It contains RNA-seq counts
 
 ```r
 library(SummarizedExperiment)
-```
 
-```
-Loading required package: GenomicRanges
-```
-
-```
-Loading required package: BiocGenerics
-```
-
-```
-Loading required package: parallel
-```
-
-```
-
-Attaching package: 'BiocGenerics'
-```
-
-```
-The following objects are masked from 'package:parallel':
-
-    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    clusterExport, clusterMap, parApply, parCapply, parLapply,
-    parLapplyLB, parRapply, parSapply, parSapplyLB
-```
-
-```
-The following objects are masked from 'package:stats':
-
-    IQR, mad, xtabs
-```
-
-```
-The following objects are masked from 'package:base':
-
-    anyDuplicated, append, as.data.frame, cbind, colnames,
-    do.call, duplicated, eval, evalq, Filter, Find, get, grep,
-    grepl, intersect, is.unsorted, lapply, lengths, Map, mapply,
-    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
-    Position, rank, rbind, Reduce, rownames, sapply, setdiff,
-    sort, table, tapply, union, unique, unsplit
-```
-
-```
-Loading required package: S4Vectors
-```
-
-```
-Loading required package: stats4
-```
-
-```
-
-Attaching package: 'S4Vectors'
-```
-
-```
-The following objects are masked from 'package:base':
-
-    colMeans, colSums, expand.grid, rowMeans, rowSums
-```
-
-```
-Loading required package: IRanges
-```
-
-```
-Loading required package: GenomeInfoDb
-```
-
-```
-Loading required package: Biobase
-```
-
-```
-Welcome to Bioconductor
-
-    Vignettes contain introductory material; view with
-    'browseVignettes()'. To cite Bioconductor, see
-    'citation("Biobase")', and for packages 'citation("pkgname")'.
-```
-
-```r
 se <- readRDS(file.path("data", "seUCEC.rds"))
 se
 ```
@@ -528,24 +445,7 @@ To perform quality assessment and normalization it is necessary to load the [edg
 
 ```r
 library(edgeR)
-```
 
-```
-Loading required package: limma
-```
-
-```
-
-Attaching package: 'limma'
-```
-
-```
-The following object is masked from 'package:BiocGenerics':
-
-    plotMA
-```
-
-```r
 dge <- DGEList(counts=assays(se)$counts, genes=mcols(se))
 ```
 
@@ -790,23 +690,6 @@ want to see the code. Options fig.height and fig.width control height and width
 of the plot in inches while out.height and out.width do it in the final output
 file; see http://yihui.name/knitr/options for full details.
 --->
-
-
-```
-Loading required package: lattice
-```
-
-```
-Loading required package: annotate
-```
-
-```
-Loading required package: AnnotationDbi
-```
-
-```
-Loading required package: XML
-```
 
 <img src="figure/distRawExp-1.png" title="Figure S2: Non-parametric density distribution of expression profiles per sample." alt="Figure S2: Non-parametric density distribution of expression profiles per sample." width="800px" style="display: block; margin: auto;" /><p class="caption">Figure S2: Non-parametric density distribution of expression profiles per sample.</p>
 
@@ -1098,36 +981,6 @@ The sva (http://www.bioconductor.org/packages/release/bioc/html/sva.html) packag
 
 ```r
 library(sva)
-```
-
-```
-Loading required package: mgcv
-```
-
-```
-Loading required package: nlme
-```
-
-```
-
-Attaching package: 'nlme'
-```
-
-```
-The following object is masked from 'package:IRanges':
-
-    collapse
-```
-
-```
-This is mgcv 1.8-12. For overview type 'help("mgcv-package")'.
-```
-
-```
-Loading required package: genefilter
-```
-
-```r
 mod <- model.matrix(~ se$type, colData(se))
 combatexp <- ComBat(logCPM, batch, mod)
 ```
@@ -1523,6 +1376,7 @@ We will try to identify **potential sources of unwanted variation** in the pheno
 - Age at diagnosis
 - Race
 - Tissue Source Site
+
 However, the majority of them are not possible because the tumor samples contain the corresponding phenotypic data but the normal samples not. The only possible source of variation which is in both tumor and normal samples is the **Tissue Source Site**, which is obtained from the patient barcode.
 
 
@@ -1597,7 +1451,7 @@ length(DEgenes3)
 ```
 
 ```
-[1] 6491
+[1] 6239
 ```
 
 Examine the chromosome distribution of genes called DE at 5% FDR:
@@ -1609,27 +1463,27 @@ sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 
 ```
 
-                chr1                chr19                chr11 
-                 673                  462                  449 
-                chr2                 chr3                chr17 
-                 438                  369                  367 
-               chr12                 chr7                 chr6 
-                 345                  311                  285 
-                chr5                 chr9                chr16 
-                 280                  264                  259 
+                chr1                chr19                 chr2 
+                 643                  457                  438 
+               chr11                 chr3                chr17 
+                 429                  353                  346 
+               chr12                 chr7                 chr5 
+                 328                  301                  268 
+                chr6                chr16                 chr9 
+                 267                  258                  249 
                 chrX                chr14                chr10 
-                 245                  235                  227 
+                 232                  229                  220 
                 chr4                 chr8                chr15 
-                 216                  214                  206 
+                 210                  207                  194 
                chr20                chr22                chr13 
-                 204                  144                  116 
+                 194                  133                  111 
                chr21                chr18                 chrY 
-                  86                   85                    8 
+                  83                   80                    6 
 chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt 
                    1                    1                    1 
 ```
 
-Using this approach, the results obtained are 6491 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
+Using this approach, the results obtained are 6239 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
 ### 4. Adjust for unknown covariates
@@ -1701,26 +1555,26 @@ TCGA.AX.A05Y.01A.11R.A00V.07                                      0
 TCGA.AX.A0IZ.01A.11R.A118.07                                      0
 TCGA.AX.A0J0.01A.11R.A109.07                                      0
                                       SV1         SV2         SV3
-TCGA.AJ.A3NC.01A.11R.A22K.07  0.102406867 -0.12182878  0.27746076
-TCGA.AJ.A3NE.01A.11R.A22K.07  0.065448685 -0.28952299  0.15155428
-TCGA.AJ.A3NH.01A.11R.A22K.07 -0.003567402  0.05556203  0.07984722
-TCGA.AX.A05Y.01A.11R.A00V.07  0.223533482  0.12012572 -0.38638515
-TCGA.AX.A0IZ.01A.11R.A118.07  0.156016394 -0.27855529 -0.01448108
-TCGA.AX.A0J0.01A.11R.A109.07 -0.203823845  0.08789727 -0.08187703
-                                     SV4         SV5        SV6
-TCGA.AJ.A3NC.01A.11R.A22K.07 -0.17994665  0.08821435 -0.1823997
-TCGA.AJ.A3NE.01A.11R.A22K.07 -0.03438036 -0.30359958 -0.1395863
-TCGA.AJ.A3NH.01A.11R.A22K.07 -0.05125137  0.08454970  0.3692608
-TCGA.AX.A05Y.01A.11R.A00V.07  0.19848950  0.08507325 -0.2651780
-TCGA.AX.A0IZ.01A.11R.A118.07 -0.23306996 -0.34590747 -0.1178895
-TCGA.AX.A0J0.01A.11R.A109.07 -0.25701562  0.20416751  0.0702024
+TCGA.AJ.A3NC.01A.11R.A22K.07  0.102406869 -0.12182878  0.27746076
+TCGA.AJ.A3NE.01A.11R.A22K.07  0.065448684 -0.28952300  0.15155429
+TCGA.AJ.A3NH.01A.11R.A22K.07 -0.003567403  0.05556203  0.07984721
+TCGA.AX.A05Y.01A.11R.A00V.07  0.223533483  0.12012572 -0.38638515
+TCGA.AX.A0IZ.01A.11R.A118.07  0.156016392 -0.27855529 -0.01448107
+TCGA.AX.A0J0.01A.11R.A109.07 -0.203823846  0.08789727 -0.08187704
+                                     SV4         SV5         SV6
+TCGA.AJ.A3NC.01A.11R.A22K.07 -0.17994665  0.08821434 -0.18239974
+TCGA.AJ.A3NE.01A.11R.A22K.07 -0.03438035 -0.30359959 -0.13958625
+TCGA.AJ.A3NH.01A.11R.A22K.07 -0.05125137  0.08454969  0.36926080
+TCGA.AX.A05Y.01A.11R.A00V.07  0.19848949  0.08507325 -0.26517806
+TCGA.AX.A0IZ.01A.11R.A118.07 -0.23306995 -0.34590747 -0.11788951
+TCGA.AX.A0J0.01A.11R.A109.07 -0.25701563  0.20416750  0.07020241
                                       SV7         SV8         SV9
-TCGA.AJ.A3NC.01A.11R.A22K.07  0.117946601 -0.03003028  0.03190464
-TCGA.AJ.A3NE.01A.11R.A22K.07  0.285120989  0.09296381 -0.05701625
-TCGA.AJ.A3NH.01A.11R.A22K.07  0.003551288 -0.45397798  0.11067229
-TCGA.AX.A05Y.01A.11R.A00V.07 -0.389586848 -0.24884877 -0.32586873
-TCGA.AX.A0IZ.01A.11R.A118.07  0.084247725  0.13700103  0.01980261
-TCGA.AX.A0J0.01A.11R.A109.07 -0.134303520  0.27996280 -0.13762299
+TCGA.AJ.A3NC.01A.11R.A22K.07  0.117946610 -0.03003028  0.03190465
+TCGA.AJ.A3NE.01A.11R.A22K.07  0.285120986  0.09296381 -0.05701625
+TCGA.AJ.A3NH.01A.11R.A22K.07  0.003551297 -0.45397797  0.11067228
+TCGA.AX.A05Y.01A.11R.A00V.07 -0.389586836 -0.24884878 -0.32586872
+TCGA.AX.A0IZ.01A.11R.A118.07  0.084247726  0.13700105  0.01980260
+TCGA.AX.A0J0.01A.11R.A109.07 -0.134303513  0.27996279 -0.13762299
 ```
 
 Third, we fit again the linear models for each gene with the updated design matrix, and calculate the moderated t-statistics:
@@ -1802,7 +1656,7 @@ Approach used | DE genes | Chromosome with more DE
 --------------|----------|------------------------
 1. Fit directly the linear model  | 6457 | chr1
 2. Adjust for mean-variance relationship | 6441 | chr1
-3. Adjust for known covariates | 6491 | chr1
+3. Adjust for known covariates | 6239 | chr1
 4. Adjust for known covariates + SVA | 7845 | chr1
 
 The number of DE genes importantly increases in the fourth model with respect to the other models. If the outcome of interest is not confounded with other sources of variation, the more variables that we put in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it has. So, the model that is going to be used for the following analysis is the fourth model, **adjusting for known covariates plus the SVA**.
@@ -1929,66 +1783,7 @@ Doing this analysis with [GOstats](http://www.bioconductor.org/packages/release/
 
 ```r
 library(org.Hs.eg.db)
-```
-
-```
-
-```
-
-```r
 library(GOstats)
-```
-
-```
-Loading required package: Category
-```
-
-```
-Loading required package: Matrix
-```
-
-```
-
-Attaching package: 'Matrix'
-```
-
-```
-The following object is masked from 'package:S4Vectors':
-
-    expand
-```
-
-```
-Loading required package: graph
-```
-
-```
-
-Attaching package: 'graph'
-```
-
-```
-The following object is masked from 'package:XML':
-
-    addNode
-```
-
-```
-
-```
-
-```
-
-Attaching package: 'GOstats'
-```
-
-```
-The following object is masked from 'package:AnnotationDbi':
-
-    makeGOGraph
-```
-
-```r
 geneUniverse <- rownames(se)
 params <- new("GOHyperGParams", geneIds=DEgenes4, universeGeneIds=geneUniverse,
                 annotation="org.Hs.eg.db", ontology="BP",
@@ -2311,20 +2106,21 @@ other attached packages:
  [7] org.Hs.eg.db_3.3.0         sva_3.20.0                
  [9] genefilter_1.54.2          mgcv_1.8-12               
 [11] nlme_3.1-128               geneplotter_1.50.0        
-[13] annotate_1.50.0            XML_3.98-1.1              
+[13] annotate_1.50.0            XML_3.98-1.4              
 [15] AnnotationDbi_1.34.3       lattice_0.20-33           
 [17] edgeR_3.14.0               limma_3.28.5              
 [19] SummarizedExperiment_1.2.2 Biobase_2.32.0            
-[21] GenomicRanges_1.24.1       GenomeInfoDb_1.8.1        
+[21] GenomicRanges_1.24.0       GenomeInfoDb_1.8.1        
 [23] IRanges_2.6.0              S4Vectors_0.10.1          
 [25] BiocGenerics_0.18.0        markdown_0.7.7            
 [27] knitr_1.13                
 
 loaded via a namespace (and not attached):
- [1] formatR_1.4            RColorBrewer_1.0-5     XVector_0.12.0        
+ [1] formatR_1.4            RColorBrewer_1.1-2     XVector_0.12.0        
  [4] tools_3.3.0            zlibbioc_1.18.0        digest_0.6.9          
  [7] RSQLite_1.0.0          evaluate_0.9           DBI_0.4-1             
-[10] stringr_0.6.2          grid_3.3.0             GSEABase_1.34.0       
-[13] RBGL_1.48.1            survival_2.39-4        codetools_0.2-14      
-[16] splines_3.3.0          AnnotationForge_1.14.2 KernSmooth_2.23-15    
+[10] stringr_1.0.0          grid_3.3.0             GSEABase_1.34.0       
+[13] survival_2.39-4        RBGL_1.48.1            magrittr_1.5          
+[16] codetools_0.2-14       splines_3.3.0          AnnotationForge_1.14.2
+[19] KernSmooth_2.23-15     stringi_1.1.1         
 ```

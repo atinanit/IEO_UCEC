@@ -758,6 +758,7 @@ We will try to identify **potential sources of unwanted variation** in the pheno
 - Age at diagnosis
 - Race
 - Tissue Source Site
+
 However, the majority of them are not possible because the tumor samples contain the corresponding phenotypic data but the normal samples not. The only possible source of variation which is in both tumor and normal samples is the **Tissue Source Site**, which is obtained from the patient barcode.
 
 ```{r}

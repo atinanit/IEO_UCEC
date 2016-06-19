@@ -1806,7 +1806,7 @@ Approach used | DE genes | Chromosome with more DE
 3. Adjust for known covariates | 6491 | chr1
 4. Adjust for known covariates + SVA | 7845 | chr1
 
-The number of DE genes importantly increases in the fourth model with respect to the other models. If the outcome of interest is not confounded with other sources of variation, the more variables that we put in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it has. So, the model that is going to be used for the following analysis is the fourth model, **adjusting for known covariates plus the SVA**.
+The number of DE genes importantly increases in the fourth model with respect to the other models. If the outcome of interest is not confounded with other sources of variation, the more variables that we put in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it has. However, the statistical power of our analysis increases, and this is a signal that the model has been adjusted for the data heterogenity that was difficulting the statistical power. Therefore, the model that is going to be used for posterior Functional Enrichment Analysis is the fourth model, **adjusting for known covariates plus the SVA**.
 
 ### Volcano plot
 
@@ -1913,7 +1913,7 @@ Now, it is possible to explore graphically the overlap of DE genes between contr
 
 <img src="figure/vennDiagram-1.png" title="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest" alt="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest" height="300px" style="display: block; margin: auto;" /><p class="caption">Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest</p>
 
-As it can be seen, there is not a clear interaction between TSS and type factors. Probably, there is not much unwanted variability in the TSS factor. It could be interest for future analyses to use `hystologic_analysis`, as there are several studies reporting differentially expressed genes in function of the type of histologic diagnosis.
+As it can be seen, there is not a clear interaction between TSS and type factors. It could be interesting for future analyses to use `hystologic_analysis`, as there are several studies reporting differentially expressed genes in function of the type of histologic diagnosis.
 
 ## Functional Enrichment: The Gene Ontology analysis
 

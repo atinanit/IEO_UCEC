@@ -7,60 +7,36 @@
 % {goi} Genetics of Immunity 
 % {gos} Genetics of Sex 
 % {mp} Multiparental Populations
-\usepackage{cite}
-\usepackage{url}
 
 \title{Analysis of a The Cancer Genome Atlas (TCGA) RNA-seq data set on Uterine Corpus Endometrial Carcinoma (UCEC)}
 
 \author[$\ast$]{Aguirre, J.}
 \author[$\ast$]{Funosas, G.}
-\author[$\ast$]{Prat, C.}
+\author[$\ast$,1]{Prat, C.}
 
-\affil[$\ast$]{Universitat Pompeu Fabra}
+\affil[$\ast$]{University Pompeu Fabra}
 
-\keywords{The Cancer Genome Atlas; Endometrial Carcinoma; Differential Expression; Functional Enrichment}
+\keywords{UCEC; TCGA; RNA-seq; Differential Expression; Functional Enrichment;}
 
-\runningtitle{GENETICS Journal Template on Overleaf} % For use in the footer 
+\runningtitle{GENETICS | Investigation} % For use in the footer 
 
 \correspondingauthor{Joaquim Aguirre, Gerard Funosas, Cristina Prat}
 
 \begin{abstract}
-The abstract should be written for people who may not read the entire paper, so it must stand on its own. The impression it makes usually determines whether the reader will go on to read the article, so the abstract must be engaging, clear, and concise. In addition, the abstract may be the only part of the article that is indexed in databases, so it must accurately reflect the content of the article. A well-written abstract is the  most effective way to reach intended readers, leading to more robust search, retrieval, and usage of the article. 
-
-Please see additional guidelines notes on preparing your abstract below.
+The Cancer Genome Atlas (TCGA) focuses on finding the genetic bases of cancer in human (\textit{Homo sapiens sapiens}) different tissues. The RNA sequencing tool provides information of the transcriptome of a biological sample in a given condition. Comparing tumorous and healthy samples, the differences in gene expression between those conditions can be uncovered. Uterine Corpus Endometrial Carcinoma (UCEC) is one of the most common cancers within women. In this study, a uterine RNA-seq dataset from TCGA has been analysed using bioinformatic tools. A paired sample sub-setting and a low-expressed genes filtering left a quality-filtered dataset of 11571 genes for 32 paired samples. After fitting the data in a regression linear model, taking into account both a surrogate variable analysis and one known covariate effect, the number of differentially expressed genes summed 7845 (68\%). The corresponding GO terms for each of those genes was assigned, and the most represented biological processes in the whole dataset were obtained and ordered by significance.  8 out of the 10 functional groups most differentially expressed in tumorous samples were related to cancer biochemical processes, such as tissue growth, immune response or cell signaling pathways. Another one was directly related to uterine muscle contraction, altered by cancer. Those results show that, even if the genetic bases of cancer are complex, there are both universal patterns in multiple kinds of cancer and specific ones for specific tumor types that can be further assessed to find new ways of controlling tumor development.
 \end{abstract}
 
 \setboolean{displaycopyright}{true}
 
 \begin{document}
+
 \maketitle
 \thispagestyle{firststyle}
 \marginmark
 \firstpagefootnote
-\correspondingauthoraffiliation{Please insert the affiliation correspondence address and email for the corresponding author. The corresponding author should be marked with a `1' in the author list, as shown in the example.}
+\correspondingauthoraffiliation{cristina.prat.ferrer@gmail.com}
 \vspace{-11pt}%
 
-\lettrine[lines=2]{\color{color2}T}{}his \textit{Genetics} journal template is provided to help you write your work in the correct journal format. Instructions for use are provided below. 
-
-
-\section*{Author Affiliations}
-
-For the authors' names, indicate different affiliations with the symbols: $\ast$, $\dagger$, $\ddagger$, $\S$. After four authors, the symbols double, triple, quadruple, and so forth as required.
-
-\section*{Your Abstract}
-
-In addition to the guidelines provided in the example abstract above, your abstract should:
-
-\begin{itemize}
-\item provide a synopsis of the entire article;
-\item begin with the broad context of the study, followed by specific background for the study;
-\item describe the purpose, methods and procedures, core findings and results, and conclusions of the study;
-\item emphasize new or important aspects of the research;
-\item engage the broad readership of GENETICS and be understandable to a diverse audience (avoid using jargon);
-\item be a single paragraph of less than 250 words;
-\item contain the full name of the organism studied;
-\item NOT contain citations or abbreviations.
-\end{itemize}
 
 \section*{Introduction}
 
@@ -78,6 +54,10 @@ The Cancer Genome Atlas (TCGA) \citep{TheCancerGenomeAtlas} researchers have:
 \end{itemize}
 \end{itemize}
 
+The comparison of transcriptional data between tumorous and healthy samples will revel gene expression differences specifically caused by the tumorous condition, and therefore find the main altered biochemical patters that cancer causes in the cells affected. That information may lead to further understanding of this illness and new possible treatments. \\
+\newline
+On that ground, the aim of the study is to find out which are the most significant biological pathways altered in tumorous cells of the uterine corpus. 
+
 
 %For the introduction, authors should be mindful of the broad readership of the journal. The introduction should set the stage for the importance of the work to a generalist reader and draw the reader in to the specific study. The scope and impact of the work should be clearly stated.
 
@@ -93,7 +73,7 @@ The Cancer Genome Atlas (TCGA) \citep{TheCancerGenomeAtlas} researchers have:
 
 \section*{Materials and Methods}
 
-The Bioconductor project \citep{Gentleman2004} is an open-source community effort to develop software packages on top of R for the analysis of molecular data obtained from high-throughput experimental technologies such as microrrays or high-throughput sequencing instruments.
+The Bioconductor project \citep{Gentleman2004} is an open-source community effort to develop software packages on top of R for the analysis of molecular data obtained from high-throughput experimental technologies such as microarrays or high-throughput sequencing instruments.
 
 
 \subsection*{Data Availability}
@@ -101,7 +81,7 @@ The SummarizedExperiment \citep{SummarizedExperiment} class was designed to meet
 
 The RNA-seq data set on Uterine Corpus Endometrial Carcinoma (UCEC) have 20115 genes and 589 samples. Associated to the row (feature) data, there are 455 sequences (1 circular) from hg38 genome.
 
-From the S4 object, it is possible to extract information about the gender of the patients who donated the samples. As the study is focused on endometrial cancer, all the samples are from female patients (556 samples). There are also 33 'NA' samples which were considered to be discarded, but finally they have been maintained as they provide the project with some normal samples, which are not abundant in the dataset.
+From the S4 object, it is possible to extract information about the gender of the patients who donated the samples, as well as other metadata. As the study is focused on endometrial cancer, all the samples are from female patients (556 samples). There are also 33 'NA' samples which were considered to be discarded from the beginning, but finally they were maintained as they provide the project with some normal samples, which are not abundant in the dataset. Nevertheless, at last those samples were excluded by the paired filtering step. 
 
 \subsection*{Quality assessment and normalization}
 The fact that each RNA-seq sample may have been ultimately sequenced at slightly different depth and that there may be sample-specific bias related implies it may need to consider two normalization steps:
@@ -117,54 +97,70 @@ The fact that each RNA-seq sample may have been ultimately sequenced at slightly
 \end{itemize}
 \end{itemize}
 
-It has been considered to discard those samples corresponding to the $ 10\% $ quartile of the sample depth distribution, as the quality of the sequentiation of these samples is poorer. After that, the filtered set has 20115 genes and 527 samples.
+It has been considered to discard those samples corresponding to the $ 10\% $ quartile of the sampledepth distribution, as the quality of the sequentiation of these samples is poorer. After that, the filtered set has 20115 genes and 527 samples.
 
-It is important to work with a subset which is as much representative as the initial set of samples and that contains the samples with higher quality. The paired subsetting offers the advantage that as samples are paired, the posterior analysis of batch effect identification will be performed with a perfectly balanced set, which avoids confusions for not having samples of one of the variables. However, in this dataset there are only 36 paired samples, which is a very small subset of samples.
+It is imporatnt to work with a subset which is as much representative as the initial set of samples and that contains the samples with higher quality. The paired subsetting offers the advantage that as samples are paired, the posterior analysis of batch effect identification will be performed with a perfectly balanced set, which avoids confusions for not having samples of one of the variables. This step reduces the dataset to 36 paired samples.
 
-The distribution of expression levels among samples and among genes in terms of logarithmic CPM units are checked. A cut-off of 1 $log_{2}$ CPM unit is made as minimum value of expression to select genes being expressed across samples in order to filter out lowly-expressed genes. The dataset ends up with 11571 genes.
+The distribution of expression levels among samples and among genes in terms of logarithmic CPM units are checked. A cutoff of 1 $log_{2}$ CPM unit is made as minimum value of expression to select genes being expressed across samples in order to filter out lowly-expressed genes. The dataset ends up with 11571 genes.
 
 The normalization factors are calculated on the filtered expression data set. The Trimmed Mean of M-values (TMM) method addresses the issue of the different RNA composition of the samples by estimating a scaling factor for each library. This is implemented in the edgeR package \citep{Robinson2010b} through the function calcNormFactors().
 
-The MA-plots of the normalized expression profiles are performed. In general, there are not tumor samples with major expression-level dependent biases, although some of them show variations in low-expressed values. However, there are slightly expression-level dependent biases for some normal samples. The most suspicious cases are TCGA-AJ-A3NH, TCGA-AX-A2HC, TCGA-BK-A13C and TCGA-DI-A2QY, showing sizable dependency between M and A values. 
+The MA-plots of the normalized expression profiles are performed. In general, there are not tumor samples with major expression-level dependent biases, although some of them show variations in low-expressed values. However, there are slightly expression-level dependent biases for some normal samples. The most suspicious cases are TCGA-AJ-A3NH, TCGA-AX-A2HC, TCGA-BK-A13C and TCGA-DI-A2QY, showing sizeable dependency between M and A values. 
 
 Tissue Source Site (TSS) is used as surrogate of batch effect indicator variable. It is examined how samples group together by hierarchical clustering and multidimensional scaling by Spearman correlation, annotating the outcome of interest and the surrogate of batch indicator.
 
-In the multidimensional plot (MDS) and the hierchical clustering are shown that TCGA.AX.A2HC.01A and TCGA.DI.A2QY.11A samples are problematic samples as see in the MA-plots. Therefore, both samples and its paired are removed. The dataset ends up with 32 samples.
+In the multidimensional plot (MDS) and the hierarchical clustering are shown that TCGA.AX.A2HC.01A and TCGA.DI.A2QY.11A samples are problematic samples as see in the MA-plots. Therefore, both samples and its paired are removed. The final dataset ends up with 32 samples and 11571 genes.
 
 Moreover, the sva \citep{sva} R/Bioconductor package provides a function called ComBat(). A better stratification of the tumor and normal samples are shown when ComBat is applied. ComBat is an empirical Bayes method robust to outliers in small sample sizes which removes batch effect. 
 
 
 \subsection*{Differential expression}
-We perform a simple examination of expression changes and their associated p-values using the R/Bioconductor package sva \citep{sva}. Surrogate variable analysis (sva) is a technique that tries to capture sources of heterogenity in high-throughput profiling data, such as non-biological variability introduced by batch effects. The output of SVA is an estimation of the number of so-called “surrogate variables” and their continuous values, which can be used later on to adjust for these unmeasured and unwanted effects.The SVA algorithm are used to assess the extent of differential expression this time adjusting for these surrogate variables. 
+
+We perform a simple examination of expression changes and their associated p-values using the R/Bioconductor package sva \citep{sva}. Surrogate variable analysis (sva) is a technique that tries to capture sources of heterogeneity in high-throughput profiling data, such as non-biological variability introduced by batch effects. The output of SVA is an estimation of the number of so-called “surrogate variables” and their continuous values, which can be used later on to adjust for these unmeasured and unwanted effects.The SVA algorithm are used to assess the extent of differential expression this time adjusting for these surrogate variables.  
+
+\begin{table*}[htbp]
+\begin{center}
+\caption{\bf Linear regression models created and their corresponding number of differentially expressed genes found}
+\begin{tableminipage}{\textwidth}
+\begin{tabularx}{\textwidth}{XXXX}
+\hline
+Model & Approach used & DE genes \\ [0.5ex]
+\hline
+1 & Fit directly the linear model & 6457 \\
+2 & Adjust for mean-variance relationship & 6441 \\
+3 & Adjust for known covariates & 6491 \\
+4 & Adjust for known covariates + SVA & 7845 \\
+\hline
+\end{tabularx}
+  \label{tab:shape-functions}
+\end{tableminipage}
+\end{center}
+\end{table*}
 
 After that, different types of linear regression models are built in order to assess differential expression. The conceptual purpose of a linear regression model is to represent, as accurately as possible, something complex, the data denoted by y, which is n-dimensional, in terms of something much simpler, the model, which is p -dimensional. Thus, if the model is successful, the structure in the data should be captured in those p dimensions, leaving just random variation in the residuals which lie in an (n-p)-dimensional space. In the context of DE analysis, linear regression models can be written in matrix form, design matrices. The design matrix contains as many rows as samples and as many columns as coefficients to be estimated. The limma \citep{Ritchie2015} R/Bioconductor package has been used to calculate DE analysis.
 
+If the outcome of interest is not confounded with other sources of variation, the more variables there are in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it shows. So, the model that is going to be used for the following analysis is the fourth model, adjusting for known covariates plus the surrogate variables analysis.
+
 
 \subsection*{Functional enrichment}
+
 Functional enrichment analyses constitute a straightforward way to approach the question of what pathways may be differentially expressed (DE) between normal and tumor genes in our data.
 
 The Gene Ontology (GO) database project provides a controlled vocabulary to describe gene and gene product attributes in any organism. It consists of so-called GO terms, which are pairs of term identifier (GO ID) and description. The GOstats \citep{Falcon2007} R/Bioconductor package performes a functional enrichment analysis on the entire collection of GO gene sets. A parameter object with information specifiying the gene universe, the set of DE genes and the annotation packages org.Hs.eg.db \citep{org.Hs.eg.db} to use are built. The functional enrichment analysis is turned by a conditional test which takes into account the hierarchical structure of GO terms.
-
-
-%Manuscripts submitted to \textit{GENETICS} should contain a clear description of the experimental design in sufficient detail so that the experimental analysis could be repeated by another scientist. If the level of detail necessary to explain the protocol goes beyond two paragraphs, give a short description in the main body of the paper and prepare a detailed description for supporting information.  For example, details would include indicating how many individuals were used, and if applicable how individuals or groups were combined for analysis. If working with mutants indicate how many independent mutants were isolated. If working with populations indicate how samples were collected and whether they were random with respect to the target population.
-
-
-%\subsection*{Statistical Analysis} 
-
-%It is important to indicate what statistical analysis has been performed; not just the name of the software and options selected, but the method and model applied. In the case of many genes being examined simultaneously, or many phenotypes, a multiple comparison correction should be used to control the type I error rate, or a rationale for not applying a correction must be provided. The type of correction applied should be clearly stated. It should also be clear whether the p-values reported are raw, or after correction. Corrected p-values are often appropriate, but raw p-values should be available in the supporting materials so that others may perform their own corrections. In large scale data exploration studies (e.g. genome wide expression studies) a clear and complete description of the replication structure must be provided. 
-
-%\subsection*{Data Availability}
-
-%At the end of the Materials and Methods section, include a statement on reagent and data availability. Please read the Data and Reagent Policy before writing the statement. Make sure to list the accession numbers or DOIs of any data you have placed in public repositories. List the file names and descriptions of any data you will upload as supplemental information. The statement should also include any applicable IRB numbers. You may include specifications for how to properly acknowledge or cite the data.
-
-%For example: Strains are available upon request. File S1 contains detailed descriptions of all supplemental files. File S2 contains SNP ID numbers and locations. File S3 contains genotypes for each individual. Sequence data are available at GenBank and the accession numbers are listed in File S3. Gene expression data are available at GEO with the accession number: GDS1234. Code used to generate the simulated data is provided in file S4. 
 
 
 \section*{Results and Discussion}
 
 \subsection{Differential expression analysis}
 
-From the differential expression analysis, four different models were created in order to assess differential expression, all of them using a False Discovery Rate of 5\%. The first was the simplest one, as \textbf{the linear model was fitted directly in the design matrix to every gene}. 6457 genes were differentially expressed using this approach. The second model consisted in \textbf{fitting the model adjusting for the mean-variance relationship}. This is done in order to correct the variability of RNA-seq counts from sample to sample for the same gene and different depths of different samples. The results obtained were 6441 differentially expressed genes. The third model was \textbf{adjusting the model for known covariates}, known sources of unwanted variation. The source of variation used was the \textit{Tissue Source Site (TSS)}, obtained from the patient barcode. The results were 6491 differentially expressed genes. The fourth analysis was to complement the previous model of known covariates with a \textbf{surrogate variable analysis (SVA)}. There were 9 surrogate variables found, which were added to the design matrix of the third model. From this analysis, 7845 differentially expressed genes were found. In all the models created the chromosome with higher number of differentially expressed genes was the chromosome 1.
+From the differential expression analysis, four different models were created in order to assess differential expression, all of them using a False Discovery Rate of 5\%. The first was the simplest one, as \textbf{the linear model was fitted directly in the design matrix to every gene}. 6457 genes were differentially expressed using this approach. The second model consisted in \textbf{fitting the model adjusting for the mean-variance relationship}. This is done in order to correct the variability of RNA-seq counts from sample to sample for the same gene and different depths of different samples. The results obtained were 6441 differentially expressed genes. The third model was \textbf{adjusting the model for known covariates}, known sources of unwanted variation. The source of variation used was the \textit{Tissue Source Site (TSS)}, obtained from the patient barcode. The results were 6491 differentially expressed genes. The fourth analysis was to complement the previous model of known covariates with a \textbf{surrogate variable analysis (SVA)}. There were 9 surrogate variables found, which were added to the design matrix of the third model. The MA-plot corresponding to the fourth model is represented in figure \ref{fig:MAplot}.  From this analysis, 7845 differentially expressed genes were found. In all the models created the chromosome with higher number of differentially expressed genes was the chromosome 1.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{maPlot-1}
+\caption{MA-plot for the model 4, adjusting the known covariate TSS and unkwnown covariates using SVA}
+\label{fig:MAplot}
+\end{figure}
 
 From the last model, a factorial design was performed in order to analyse the interaction between \textit{type} (tumor or normal) and \textit{TSS}, concretely with BG and BK. It was not successful, as there were not genes which were clearly differentially expressed in only one 	of them. For future analyses, it could be interesting to analyse the interaction between other possible sources of unwanted variation such as \textit{histological diagnosis}, as it has been seen in several studies that there are genes clearly differentially expressed between serous and endometroid tumors \citep{Getz2013}.
 
@@ -172,11 +168,12 @@ The more complete model is the last one, as it includes to an adjusted model for
 
 \subsection{Functional Enrichment: The Gene Ontology analysis}
 
-In the \textit{table X} we can see the list of the 10 most significantly differentially expressed pathways in uterine tumour tissue, taking the ordered goresults obtained from the final set of DEgenes. 
+In table \ref{tab:shape-functions} we can see the list of the 10 most significantly differentially expressed pathways in uterine tumour tissue, taking the ordered goresults obtained from the final set of DEgenes. 
 
 \begin{table}
-\begin{center}
+\centering
 \caption{Ten most significant gene ontologies found in the Functional Enrichment analysis}
+\begin{tableminipage}{\textwidth}
  \begin{tabular}{|| c c c c c||} 
  \hline
  \textbf{GOBPID} & \textbf{Pvalue} & \textbf{OddsRatio} & \textbf{Excount} & \textbf{Count} \\ [0.5ex] 
@@ -212,14 +209,15 @@ In the \textit{table X} we can see the list of the 10 most significantly differe
  \multicolumn{5}{||c||}{regulation of sister chromatid cohesion} \\ 
  \hline
 \end{tabular}
-\end{center}
+\label{tab:shape-functions}
+\end{tableminipage}
 \end{table}
 
 Taking those 10 top GO terms, our analysis identified nine functional groups which could be, directly or indirectly, involved in endometrial cancer. One of them seems to be a functional group specific from our cancer type, while the others don't. Another one, related to the retina formation, does not seem to be biochemically related to the UCEC. 
 
 Between the eight groups that can be related to cancer we find:
 \begin{itemize}
-  \item \textbf{Regulation of fibroblast migration}, which is directly related with tissue damage, and therefore, with tumors. Fibroblasts are considered to have a key role in the malignant progression of cancer and represent an important target in endometrial cancer research, as it has been demonstrated in some current articles \citep{Subramaniam2013, Teng2016, Turner2010}.
+  \item \textbf{Regulation of fibroblast migration}, which is directly related with tissue damage, and therefore, with tumors. Fibroblasts are considered to have a key role in the malignant progression of cancer and represent an important target in endometrial cancer research, as it has been demonstrated in some previous articles \citep{Subramaniam2013, Teng2016, Turner2010}.
   \item \textbf{Regulation of sister chromatid cohesion}, as it has been proved that aberrant sister chromatid cohesion causes instability and contributes to the development of cancer \citep{LeGallo2012}. Several studies have targeted candidate chromosome instability genes in order to treat endometrial cancer \citep{Price2013}.
   \item \textbf{Positive regulation of exosomal secretion}, which is fundamental due to the increasing evidence that tumor cells release excessive amount of exosomes \citep{Zhang2015}.
   \item \textbf{Regulation of interleukin-12 production} and \textbf{alpha-beta T cell activation} are clearly part of the development of the immune response against the tumor \citep{Colombo2002, Martin-Orozco2009}, and therefore, they are differentially expressed in comparison with normal samples. 

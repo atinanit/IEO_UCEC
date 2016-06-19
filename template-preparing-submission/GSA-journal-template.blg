@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: GSA-journal-template.aux
+The style file: genetics.bst
+Database file #1: IEO_UCEC.bib
+Warning--I didn't find a database entry for "neher2013genealogies"
+Warning--I didn't find a database entry for "rodelsperger2014characterization"
+You've used 21 entries,
+            2739 wiz_defined-function locations,
+            754 strings with 23868 characters,
+and the built_in function-call counts, 52874 in all, are:
+= -- 2762
+> -- 8934
+< -- 7
++ -- 2973
+- -- 2952
+* -- 6707
+:= -- 10119
+add.period$ -- 40
+call.type$ -- 21
+change.case$ -- 1086
+chr.to.int$ -- 21
+cite$ -- 21
+duplicate$ -- 484
+empty$ -- 685
+format.name$ -- 2981
+if$ -- 9369
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 16
+newline$ -- 66
+num.names$ -- 84
+pop$ -- 1034
+preamble$ -- 1
+purify$ -- 1068
+quote$ -- 0
+skip$ -- 238
+stack$ -- 0
+substring$ -- 523
+swap$ -- 176
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 189
+warning$ -- 0
+while$ -- 89
+width$ -- 0
+write$ -- 226
+(There were 2 warnings)

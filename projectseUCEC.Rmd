@@ -808,7 +808,7 @@ Examine the chromosome distribution of genes called DE at 5% FDR:
 sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 ```
 
-Using this approach, the results obtained are `r length(DEgenes3)` DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
+Using this approach, the results obtained are **`r length(DEgenes3)` DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is `r names(sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)[1])`.
 
 
 ### 4. Adjust for unknown covariates

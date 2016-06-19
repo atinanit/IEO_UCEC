@@ -1630,7 +1630,7 @@ chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt
                    1                    1                    1 
 ```
 
-Using this approach, the results obtained are 6491 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
+Using this approach, the results obtained are **6491 DE genes**. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
 ### 4. Adjust for unknown covariates

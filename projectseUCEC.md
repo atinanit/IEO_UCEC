@@ -2271,7 +2271,7 @@ print(xtab, file="goresults.html", type="html")
 
 ## Conclusions
 
-The main source of variation of the dataset seems to be driven by the tumor and normal condition of the samples, as seen in the figure 1. The hierarchical clustering of the samples showed a better stratification when adjusting for the tss factor, without this batch effect. 
+The main source of variation of the dataset seems to be driven by the tumor and normal condition of the samples, as seen in figure S10. The hierarchical clustering of the samples showed a better stratification when adjusting for the tss factor, without this batch effect. 
 
 The SVA analysis helps identifying more differentially expressed genes, since adjusting for other sources of variation reduces the degrees of variation of the studied variable. That is translated to more statistical power in the model and hence to more DEgenes found. 
 

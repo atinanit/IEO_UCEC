@@ -931,7 +931,7 @@ Build the contrast matrix that specifies the contrasts of interest between a set
 
 ```{r}
 #table(substr(se$bcr_patient_barcode, 6, 7))
-cont.matrix <- makeContrasts(connormal = newfacnormal.BG - newfacnormal.BK, contumor = newfactumor.BG - newfactumor.BK, levels = design)
+cont.matrix <- makeContrasts(tssnormal = newfacnormal.BG - newfacnormal.BK, tsstumor = newfactumor.BG - newfactumor.BK, levels = design)
 ```
 
 Estimate coefficients for a given set of contrasts.
@@ -949,8 +949,8 @@ head(fit6$t)
 
 Fetch table of results for each coefficient.
 ```{r}
-ttconnormal <- topTable(fit6, coef = "connormal", n = Inf)
-ttcontumor <- topTable(fit6, coef = "contumor", n = Inf)
+tttssnormal <- topTable(fit6, coef = "tssnormal", n = Inf)
+tttsstumor <- topTable(fit6, coef = "tsstumor", n = Inf)
 ```
 
 Now, it is possible to explore graphically the overlap of DE genes between contrasts of interest (Figure S19):
@@ -1053,15 +1053,16 @@ print(xtab, file="goresults.html", type="html")
 
 ## Conclusions
 
-The different QA diagnostics reveal some potentially problematic features in some of the samples (as A2HC-tumor). We may consider discarding those from further analysis.
+The main source of variation of the dataset seems to be driven by the tumor and normal condition of the samples, as seen in the figure 1. The hierarchical clustering of the samples showed a better stratification when adjusting for the tss factor, without this batch effect. 
 
-The main source of variation in this data seems to be driven by the tumor and normal condition of the samples, as seen in the Figure S8.
+The SVA analysis helps identifying more differentially expressed genes, since adjusting for other sources of variation reduces the degrees of variation of the studied variable. That is translated to more statistical power in the model and hence to more DEgenes found. 
 
-The extent of expression changes can be augmented when adjusting for surrogate variables estimated with SVA. It would be interesting to observe how that extent changes when discarding potentially problematic samples.
+The functional enrichment analysis with GO terms identified nine out of the ten most differentially expressed groups that perfectly fit in the pattern of a tumorous development. 
 
-We have not been able to plot the Hierarchical clustering of samples after the SVA adjustment for surrogate variables. Therefore, as we cannot prove that the adjustment of variability has lead to clearer results, we have removed the batch effect with ComBat.
+One of those nine cancer related GO terms, defined as negative regulation of smooth muscle contraction, can be specifically related to the endometrial cancer. 
 
-The chosen factor which variability has been removed is the tss (differences depending on the tissue source site). After this modificaction, the Hierarchical clustering plot showed a better stratification of the tumor and normal samples.
+At least two found differentially expressed genes (PIK3C2A, CTNNB1) are known to be involved specifically to endometrial cancer. 
+
 
 ## Session information
 

@@ -281,7 +281,90 @@ The project starts importing the raw table of counts. It contains RNA-seq counts
 
 ```r
 library(SummarizedExperiment)
+```
 
+```
+Loading required package: GenomicRanges
+```
+
+```
+Loading required package: BiocGenerics
+```
+
+```
+Loading required package: parallel
+```
+
+```
+
+Attaching package: 'BiocGenerics'
+```
+
+```
+The following objects are masked from 'package:parallel':
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+```
+
+```
+The following objects are masked from 'package:stats':
+
+    IQR, mad, xtabs
+```
+
+```
+The following objects are masked from 'package:base':
+
+    anyDuplicated, append, as.data.frame, cbind, colnames,
+    do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, lengths, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff,
+    sort, table, tapply, union, unique, unsplit
+```
+
+```
+Loading required package: S4Vectors
+```
+
+```
+Loading required package: stats4
+```
+
+```
+
+Attaching package: 'S4Vectors'
+```
+
+```
+The following objects are masked from 'package:base':
+
+    colMeans, colSums, expand.grid, rowMeans, rowSums
+```
+
+```
+Loading required package: IRanges
+```
+
+```
+Loading required package: GenomeInfoDb
+```
+
+```
+Loading required package: Biobase
+```
+
+```
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+```
+
+```r
 se <- readRDS(file.path("data", "seUCEC.rds"))
 se
 ```
@@ -445,7 +528,24 @@ To perform quality assessment and normalization it is necessary to load the [edg
 
 ```r
 library(edgeR)
+```
 
+```
+Loading required package: limma
+```
+
+```
+
+Attaching package: 'limma'
+```
+
+```
+The following object is masked from 'package:BiocGenerics':
+
+    plotMA
+```
+
+```r
 dge <- DGEList(counts=assays(se)$counts, genes=mcols(se))
 ```
 
@@ -690,6 +790,23 @@ want to see the code. Options fig.height and fig.width control height and width
 of the plot in inches while out.height and out.width do it in the final output
 file; see http://yihui.name/knitr/options for full details.
 --->
+
+
+```
+Loading required package: lattice
+```
+
+```
+Loading required package: annotate
+```
+
+```
+Loading required package: AnnotationDbi
+```
+
+```
+Loading required package: XML
+```
 
 <img src="figure/distRawExp-1.png" title="Figure S2: Non-parametric density distribution of expression profiles per sample." alt="Figure S2: Non-parametric density distribution of expression profiles per sample." width="800px" style="display: block; margin: auto;" /><p class="caption">Figure S2: Non-parametric density distribution of expression profiles per sample.</p>
 
@@ -981,6 +1098,36 @@ The sva (http://www.bioconductor.org/packages/release/bioc/html/sva.html) packag
 
 ```r
 library(sva)
+```
+
+```
+Loading required package: mgcv
+```
+
+```
+Loading required package: nlme
+```
+
+```
+
+Attaching package: 'nlme'
+```
+
+```
+The following object is masked from 'package:IRanges':
+
+    collapse
+```
+
+```
+This is mgcv 1.8-12. For overview type 'help("mgcv-package")'.
+```
+
+```
+Loading required package: genefilter
+```
+
+```r
 mod <- model.matrix(~ se$type, colData(se))
 combatexp <- ComBat(logCPM, batch, mod)
 ```
@@ -1451,7 +1598,7 @@ length(DEgenes3)
 ```
 
 ```
-[1] 6239
+[1] 6491
 ```
 
 Examine the chromosome distribution of genes called DE at 5% FDR:
@@ -1463,27 +1610,27 @@ sort(table(tt3$chr[tt3$adj.P.Val < FDRcutoff]), decreasing = TRUE)
 
 ```
 
-                chr1                chr19                 chr2 
-                 643                  457                  438 
-               chr11                 chr3                chr17 
-                 429                  353                  346 
-               chr12                 chr7                 chr5 
-                 328                  301                  268 
-                chr6                chr16                 chr9 
-                 267                  258                  249 
+                chr1                chr19                chr11 
+                 673                  462                  449 
+                chr2                 chr3                chr17 
+                 438                  369                  367 
+               chr12                 chr7                 chr6 
+                 345                  311                  285 
+                chr5                 chr9                chr16 
+                 280                  264                  259 
                 chrX                chr14                chr10 
-                 232                  229                  220 
+                 245                  235                  227 
                 chr4                 chr8                chr15 
-                 210                  207                  194 
+                 216                  214                  206 
                chr20                chr22                chr13 
-                 194                  133                  111 
+                 204                  144                  116 
                chr21                chr18                 chrY 
-                  83                   80                    6 
+                  86                   85                    8 
 chr17_GL000258v2_alt chr19_KI270921v1_alt  chr1_KI270766v1_alt 
                    1                    1                    1 
 ```
 
-Using this approach, the results obtained are 6239 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
+Using this approach, the results obtained are 6491 DE genes. As it can be seen in the chromosome distribution, the chromosome with more DE genes is chr1.
 
 
 ### 4. Adjust for unknown covariates
@@ -1656,7 +1803,7 @@ Approach used | DE genes | Chromosome with more DE
 --------------|----------|------------------------
 1. Fit directly the linear model  | 6457 | chr1
 2. Adjust for mean-variance relationship | 6441 | chr1
-3. Adjust for known covariates | 6239 | chr1
+3. Adjust for known covariates | 6491 | chr1
 4. Adjust for known covariates + SVA | 7845 | chr1
 
 The number of DE genes importantly increases in the fourth model with respect to the other models. If the outcome of interest is not confounded with other sources of variation, the more variables that we put in the linear model, the fewer degrees of freedom it has, and therefore the less statistical power that it has. So, the model that is going to be used for the following analysis is the fourth model, **adjusting for known covariates plus the SVA**.
@@ -1726,7 +1873,7 @@ Build the contrast matrix that specifies the contrasts of interest between a set
 
 ```r
 #table(substr(se$bcr_patient_barcode, 6, 7))
-cont.matrix <- makeContrasts(connormal = newfacnormal.BG - newfacnormal.BK, contumor = newfactumor.BG - newfactumor.BK, levels = design)
+cont.matrix <- makeContrasts(tssnormal = newfacnormal.BG - newfacnormal.BK, tsstumor = newfactumor.BG - newfactumor.BK, levels = design)
 ```
 
 Estimate coefficients for a given set of contrasts.
@@ -1746,7 +1893,7 @@ head(fit6$t)
 
 ```
     Contrasts
-      connormal   contumor
+      tssnormal   tsstumor
   1  -0.2655023 -0.2593460
   2  -1.9442266 -0.5884159
   12 -0.5951888  0.8157689
@@ -1758,15 +1905,15 @@ head(fit6$t)
 Fetch table of results for each coefficient.
 
 ```r
-ttconnormal <- topTable(fit6, coef = "connormal", n = Inf)
-ttcontumor <- topTable(fit6, coef = "contumor", n = Inf)
+tttssnormal <- topTable(fit6, coef = "tssnormal", n = Inf)
+tttsstumor <- topTable(fit6, coef = "tsstumor", n = Inf)
 ```
 
-Explore graphically the overlap of DE genes between contrasts of interest (Figure S19):
+Now, it is possible to explore graphically the overlap of DE genes between contrasts of interest (Figure S19):
 
 <img src="figure/vennDiagram-1.png" title="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest" alt="Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest" height="300px" style="display: block; margin: auto;" /><p class="caption">Figure S19: VennDiagram: Overlap of DE genes between contrasts of interest</p>
 
-
+As it can be seen, there is not a clear interaction between TSS and type factors. Probably, there is not much unwanted variability in the TSS factor. It could be interest for future analyses to use `hystologic_analysis`, as there are several studies reporting differentially expressed genes in function of the type of histologic diagnosis.
 
 ## Functional Enrichment: The Gene Ontology analysis
 
@@ -1783,7 +1930,66 @@ Doing this analysis with [GOstats](http://www.bioconductor.org/packages/release/
 
 ```r
 library(org.Hs.eg.db)
+```
+
+```
+
+```
+
+```r
 library(GOstats)
+```
+
+```
+Loading required package: Category
+```
+
+```
+Loading required package: Matrix
+```
+
+```
+
+Attaching package: 'Matrix'
+```
+
+```
+The following object is masked from 'package:S4Vectors':
+
+    expand
+```
+
+```
+Loading required package: graph
+```
+
+```
+
+Attaching package: 'graph'
+```
+
+```
+The following object is masked from 'package:XML':
+
+    addNode
+```
+
+```
+
+```
+
+```
+
+Attaching package: 'GOstats'
+```
+
+```
+The following object is masked from 'package:AnnotationDbi':
+
+    makeGOGraph
+```
+
+```r
 geneUniverse <- rownames(se)
 params <- new("GOHyperGParams", geneIds=DEgenes4, universeGeneIds=geneUniverse,
                 annotation="org.Hs.eg.db", ontology="BP",
@@ -2065,15 +2271,16 @@ print(xtab, file="goresults.html", type="html")
 
 ## Conclusions
 
-The different QA diagnostics reveal some potentially problematic features in some of the samples (as A2HC-tumor). We may consider discarding those from further analysis.
+The main source of variation of the dataset seems to be driven by the tumor and normal condition of the samples, as seen in the figure 1. The hierarchical clustering of the samples showed a better stratification when adjusting for the tss factor, without this batch effect. 
 
-The main source of variation in this data seems to be driven by the tumor and normal condition of the samples, as seen in the Figure S8.
+The SVA analysis helps identifying more differentially expressed genes, since adjusting for other sources of variation reduces the degrees of variation of the studied variable. That is translated to more statistical power in the model and hence to more DEgenes found. 
 
-The extent of expression changes can be augmented when adjusting for surrogate variables estimated with SVA. It would be interesting to observe how that extent changes when discarding potentially problematic samples.
+The functional enrichment analysis with GO terms identified nine out of the ten most differentially expressed groups that perfectly fit in the pattern of a tumorous development. 
 
-We have not been able to plot the Hierarchical clustering of samples after the SVA adjustment for surrogate variables. Therefore, as we cannot prove that the adjustment of variability has lead to clearer results, we have removed the batch effect with ComBat.
+One of those nine cancer related GO terms, defined as negative regulation of smooth muscle contraction, can be specifically related to the endometrial cancer. 
 
-The chosen factor which variability has been removed is the tss (differences depending on the tissue source site). After this modificaction, the Hierarchical clustering plot showed a better stratification of the tumor and normal samples.
+At least two found differentially expressed genes (PIK3C2A, CTNNB1) are known to be involved specifically to endometrial cancer. 
+
 
 ## Session information
 
@@ -2120,7 +2327,7 @@ loaded via a namespace (and not attached):
  [4] tools_3.3.0            zlibbioc_1.18.0        digest_0.6.9          
  [7] RSQLite_1.0.0          evaluate_0.9           DBI_0.4-1             
 [10] stringr_1.0.0          grid_3.3.0             GSEABase_1.34.0       
-[13] survival_2.39-4        RBGL_1.48.1            magrittr_1.5          
+[13] RBGL_1.48.1            survival_2.39-4        magrittr_1.5          
 [16] codetools_0.2-14       splines_3.3.0          AnnotationForge_1.14.2
 [19] KernSmooth_2.23-15     stringi_1.1.1         
 ```
